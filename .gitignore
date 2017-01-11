@@ -1,0 +1,38 @@
+### Generated files
+
+bin/
+gen/
+
+*.apk
+*.patch
+
+### Gradle files
+
+.gradle/
+build/
+
+### Local configuration file (sdk path, etc)
+
+local.properties
+
+### Log Files
+
+*.log
+
+### IDEA
+
+**/.idea/workspace.xml
+**/.idea/libraries
+**/.idea/dictionaries
+
+*.iml
+
+### VS Code
+### Eclipse
+**/.classpath
+**/.project
+**/.settings
+
+### OSX
+
+.DS_Store

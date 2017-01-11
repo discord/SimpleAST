@@ -1,0 +1,165 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'com.jfrog.bintray'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+
+group = 'com.discord'
+version = '1.0.0-alpha1'
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    scm {
+        url "https://github.com/angarron/SimpleAST.git"
+    }
+}
+
+publishing {
+    // Publish to local repository
+    repositories {
+        mavenLocal() // ~/.m2
+    }
+
+    publications {
+        // Create tasks based on the application build variant (productFlavor + buildType = variant)
+        android.libraryVariants.all { variant ->
+
+            def variantName = variant.name.capitalize()
+
+            /**
+             * Generate Jar of Java sources.
+             */
+            def jarSourceTask = task("jar${variantName}Sources", type: Jar) {
+                description = "Generates Java Sources for ${variantName}."
+                group = "artifact"
+                classifier = "sources"
+                from variant.javaCompile.source
+            }
+            jarSourceTask.dependsOn variant.javaCompile
+            artifacts.add("archives", jarSourceTask)
+
+            /**
+             * Generate Javadocs.
+             */
+            def javadocTask = task("generate${variantName}Javadocs", type: Javadoc) {
+                description = "Generates Javadoc for ${variantName}."
+                source = variant.javaCompile.source
+                classpath += files(variant.javaCompile.classpath.files)
+                classpath += files(android.getBootClasspath().join(File.pathSeparator))
+                classpath += files("${android.sdkDirectory}/platforms/${android.compileSdkVersion}/android.jar")
+                exclude "**/R.java"
+            }
+            javadocTask.dependsOn variant.javaCompile
+
+            /**
+             * Generate Jar of Javadocs.
+             */
+            def jarJavadocTask = task("jar${variantName}Javadocs", type: Jar) {
+                description = "Generate Javadoc Jar for ${variantName}."
+                group = "artifact"
+                classifier = "javadoc"
+                from javadocTask.destinationDir
+            }
+            jarJavadocTask.dependsOn javadocTask
+            artifacts.add("archives", jarJavadocTask)
+
+            // Create custom publication based on the "variant"
+            // "Debug" and "Release" variants
+            "${variantName}"(MavenPublication) {
+
+                groupId 'com.discord'
+                artifactId 'simpleast'
+                artifact "${project.buildDir}/outputs/aar/${project.name}-${variant.name}.aar"
+                artifact jarSourceTask
+                artifact jarJavadocTask
+
+                pom {
+                    withXml {
+                        def root = asNode()
+
+                        // List dependencies
+                        def dependenciesNode = root.appendNode("dependencies")
+                        configurations.implementation.allDependencies.each {
+                            if (it.name != 'unspecified') {
+                                def dependencyNode = dependenciesNode.appendNode('dependency')
+                                dependencyNode.appendNode('groupId', it.group)
+                                dependencyNode.appendNode('artifactId', it.name)
+                                dependencyNode.appendNode('version', it.version)
+                            }
+                        }
+
+                        // Add parent POM information
+                        root.children().last() + pomConfig
+                    }
+                }
+            }
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+
+    publications = ['Release']
+    pkg {
+        repo = 'android'
+        name = 'SimpleAST'
+        userOrg = 'discord'
+        desc = 'Extensible Android library for both parsing text into Abstract Syntax Trees and rendering those trees as rich text.'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/angarron/SimpleAST.git'
+        publicDownloadNumbers = true
+
+        version {
+            gpg {
+                sign = true
+                passphrase = discord_bintray_gpg_passphrase
+            }
+        }
+    }
+}
+
+android {
+    compileSdkVersion 25
+
+    defaultConfig {
+        minSdkVersion 16
+        targetSdkVersion 25
+        versionCode 28
+        versionName "0.5.2"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+    compile 'com.android.support:appcompat-v7:25.4.0'
+    testCompile 'junit:junit:4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(Javadoc).all {
+    enabled = false
+}
