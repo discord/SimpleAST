@@ -21,9 +21,14 @@ local.properties
 
 ### IDEA
 
+.idea
 **/.idea/workspace.xml
 **/.idea/libraries
 **/.idea/dictionaries
+
+.idea/vcs.xml
+.idea/gradle.xml
+.idea/runConfigurations.xml
 
 *.iml
 
