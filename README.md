@@ -13,7 +13,9 @@ For example:
 # Using SimpleAST in your application
 If you are building with Gradle, simply add the following line to the dependencies section of your build.gradle file:
 
+```
 implementation 'com.discord:simpleast:1.0.0'
+```
 
 # Basic Usage with SimpleMarkdownRenderer
 
