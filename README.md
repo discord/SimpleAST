@@ -8,7 +8,7 @@ Besides basic markdown, SimpleAST is what the Discord Android app uses to detect
 
 For example:
 
-"<@123456789> has \*\*joined the server\*\*." becomes "@AndyG has **joined the server**." Read more here: (link to blog post)
+"<@123456789> has \*\*joined the server\*\*." becomes "@AndyG has **joined the server**." Read more here: [How Discord Renders Rich Messages on the Android App](https://blog.discordapp.com/how-discord-renders-rich-messages-on-the-android-app-67b0e5d56fbe)
 
 # Using SimpleAST in your application
 If you are building with Gradle, simply add the following line to the dependencies section of your build.gradle file:
