@@ -10,6 +10,11 @@ For example:
 
 "<@123456789> has \*\*joined the server\*\*." becomes "@AndyG has **joined the server**." Read more here: (link to blog post)
 
+# Using SimpleAST in your application
+If you are building with Gradle, simply add the following line to the dependencies section of your build.gradle file:
+
+implementation 'com.discord:simpleast:1.0.0'
+
 # Basic Usage with SimpleMarkdownRenderer
 
 If you want to simply render some text with basic markdown, you can use `SimpleRenderer`:
