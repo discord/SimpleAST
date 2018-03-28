@@ -117,7 +117,7 @@ public class TreeMatcher {
         });
     }
 
-    interface NodeMatcher {
+    public interface NodeMatcher {
         boolean matches(Node node1, Node node2);
     }
 }
