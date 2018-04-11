@@ -16,13 +16,14 @@ import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 object SimpleMarkdownRules {
-  var PATTERN_BOLD = Pattern.compile("^\\*\\*([\\s\\S]+?)\\*\\*(?!\\*)")
-  var PATTERN_UNDERLINE = Pattern.compile("^__([\\s\\S]+?)__(?!_)")
-  var PATTERN_STRIKETHRU = Pattern.compile("^~~(?=\\S)([\\s\\S]*?\\S)~~")
-  var PATTERN_TEXT = Pattern.compile("^[\\s\\S]+?(?=[^0-9A-Za-z\\s\\u00c0-\\uffff]|\\n\\n| {2,}\\n|\\w+:\\S|$)")
+
+  val PATTERN_BOLD = Pattern.compile("^\\*\\*([\\s\\S]+?)\\*\\*(?!\\*)")
+  val PATTERN_UNDERLINE = Pattern.compile("^__([\\s\\S]+?)__(?!_)")
+  val PATTERN_STRIKETHRU = Pattern.compile("^~~(?=\\S)([\\s\\S]*?\\S)~~")
+  val PATTERN_TEXT = Pattern.compile("^[\\s\\S]+?(?=[^0-9A-Za-z\\s\\u00c0-\\uffff]|\\n\\n| {2,}\\n|\\w+:\\S|$)")
   val PATTERN_ESCAPE = Pattern.compile("^\\\\([^0-9A-Za-z\\s])")
 
-  var PATTERN_ITALICS = Pattern.compile(
+  val PATTERN_ITALICS = Pattern.compile(
       // only match _s surrounding words.
       "^\\b_" + "((?:__|\\\\[\\s\\S]|[^\\\\_])+?)_" + "\\b" +
           "|" +
@@ -38,29 +39,14 @@ object SimpleMarkdownRules {
           ")\\*(?!\\*)"
   )
 
-  fun <R> createBoldRule(): Rule<R, Node<R>> {
-    return createSimpleStyleRule(PATTERN_BOLD, object : StyleFactory {
-      override fun get(): CharacterStyle {
-        return StyleSpan(Typeface.BOLD)
-      }
-    })
-  }
+  fun <R> createBoldRule(): Rule<R, Node<R>> =
+      createSimpleStyleRule(PATTERN_BOLD, { listOf(StyleSpan(Typeface.BOLD)) })
 
-  fun <R> createUnderlineRule(): Rule<R, Node<R>> {
-    return createSimpleStyleRule(PATTERN_UNDERLINE, object : StyleFactory {
-      override fun get(): CharacterStyle {
-        return UnderlineSpan()
-      }
-    })
-  }
+  fun <R> createUnderlineRule(): Rule<R, Node<R>> =
+      createSimpleStyleRule(PATTERN_UNDERLINE, { listOf(UnderlineSpan()) })
 
-  fun <R> createStrikethruRule(): Rule<R, Node<R>> {
-    return createSimpleStyleRule(PATTERN_STRIKETHRU, object : StyleFactory {
-      override fun get(): CharacterStyle {
-        return StrikethroughSpan()
-      }
-    })
-  }
+  fun <R> createStrikethruRule(): Rule<R, Node<R>> =
+      createSimpleStyleRule(PATTERN_STRIKETHRU, { listOf(StrikethroughSpan()) })
 
   fun <R> createTextRule(): Rule<R, Node<R>> {
     return object : Rule<R, Node<R>>(PATTERN_TEXT, true) {
@@ -116,17 +102,14 @@ object SimpleMarkdownRules {
     return rules
   }
 
-  private fun <R> createSimpleStyleRule(pattern: Pattern, styleFactory: StyleFactory): Rule<R, Node<R>> {
+  @JvmStatic
+  fun <R> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> List<CharacterStyle>): Rule<R, Node<R>> {
     return object : Rule<R, Node<R>>(pattern, false) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
-        val node = StyleNode<R>(listOf(styleFactory.get()))
+        val node = StyleNode<R>(styleFactory())
         return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
       }
     }
-  }
-
-  private interface StyleFactory {
-    fun get(): CharacterStyle
   }
 }
 
