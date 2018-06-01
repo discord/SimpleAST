@@ -49,7 +49,7 @@ A few things to keep in mind when building your own Parsers and Rules:
 
 ## Simplest example
 
-Let's imagine we want to render all occurrences of `<Foo>` as `Bar`, i.e. "This is <Foo> speaking" becomes "This is Bar speaking".
+Let's imagine we want to render all occurrences of `<Foo>` as `Bar`, i.e. "This is &lt;Foo&gt; speaking" becomes "This is Bar speaking".
 
 We create a simple `Rule` that detects and performs the replacement:
 
