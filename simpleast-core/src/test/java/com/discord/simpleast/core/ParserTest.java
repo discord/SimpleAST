@@ -40,13 +40,13 @@ public class ParserTest {
     }
 
     @Test
-    public void testEmptyParse() throws Exception {
+    public void testEmptyParse() {
         final List<Node<Object>> ast = parser.parse("");
         Assert.assertTrue(ast.isEmpty());
     }
 
     @Test
-    public void testParseFormattedText() throws Exception {
+    public void testParseFormattedText() {
         final List<Node<Object>> ast = parser.parse("**bold**");
 
         final StyleNode boldNode = StyleNode.Companion.createWithText("bold", Collections.singletonList((CharacterStyle) new StyleSpan(Typeface.BOLD)));
@@ -56,7 +56,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testParseLeadingFormatting() throws Exception {
+    public void testParseLeadingFormatting() {
         final List<Node<Object>> ast = parser.parse("**bold** and not bold");
 
         final StyleNode boldNode = StyleNode.Companion.createWithText("bold", Collections.singletonList((CharacterStyle) new StyleSpan(Typeface.BOLD)));
@@ -67,7 +67,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testParseTrailingFormatting() throws Exception {
+    public void testParseTrailingFormatting() {
         final List<Node<Object>> ast = parser.parse("not bold **and bold**");
 
         final TextNode leadingText = new TextNode("not bold ");
@@ -78,7 +78,7 @@ public class ParserTest {
     }
 
     @Test
-    public void testNestedFormatting() throws Exception {
+    public void testNestedFormatting() {
 //        final List<Node> ast = parser.parse("*** test1 ** test2 * test3 * test4 ** test5 ***");
         final List<Node<Object>> ast = parser.parse("**bold *and italics* and more bold**");
 //        final List<Node> ast = parser.parse("______" +

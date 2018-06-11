@@ -2,7 +2,7 @@ package com.discord.simpleast.core.parser
 
 import android.util.Log
 import com.discord.simpleast.core.node.Node
-import java.util.*
+import java.util.Stack
 
 open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDebugging: Boolean = false) {
 
@@ -29,6 +29,8 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
       remainingParses.add(ParseSpec(null, 0, source.length))
     }
 
+    val filteredRules = if (isNested) rules.filter { it.applyOnNestedParse } else rules
+
     while (!remainingParses.isEmpty()) {
       val builder = remainingParses.pop()
 
@@ -40,7 +42,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
       val offset = builder.startIndex
 
       var foundRule = false
-      for (rule in rules) {
+      for (rule in filteredRules) {
         if (isNested && !rule.applyOnNestedParse) {
           continue
         }
@@ -103,6 +105,6 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
 
   companion object {
 
-    private val TAG = "Parser"
+    private const val TAG = "Parser"
   }
 }
