@@ -11,19 +11,18 @@ import com.discord.simpleast.core.node.TextNode
 import com.discord.simpleast.core.parser.ParseSpec
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
-import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 object SimpleMarkdownRules {
 
-  val PATTERN_BOLD = Pattern.compile("^\\*\\*([\\s\\S]+?)\\*\\*(?!\\*)")
-  val PATTERN_UNDERLINE = Pattern.compile("^__([\\s\\S]+?)__(?!_)")
-  val PATTERN_STRIKETHRU = Pattern.compile("^~~(?=\\S)([\\s\\S]*?\\S)~~")
-  val PATTERN_TEXT = Pattern.compile("^[\\s\\S]+?(?=[^0-9A-Za-z\\s\\u00c0-\\uffff]|\\n\\n| {2,}\\n|\\w+:\\S|$)")
-  val PATTERN_ESCAPE = Pattern.compile("^\\\\([^0-9A-Za-z\\s])")
+  private val PATTERN_BOLD = Pattern.compile("^\\*\\*([\\s\\S]+?)\\*\\*(?!\\*)")
+  private val PATTERN_UNDERLINE = Pattern.compile("^__([\\s\\S]+?)__(?!_)")
+  private val PATTERN_STRIKETHRU = Pattern.compile("^~~(?=\\S)([\\s\\S]*?\\S)~~")
+  private val PATTERN_TEXT = Pattern.compile("^[\\s\\S]+?(?=[^0-9A-Za-z\\s\\u00c0-\\uffff]|\\n\\n| {2,}\\n|\\w+:\\S|$)")
+  private val PATTERN_ESCAPE = Pattern.compile("^\\\\([^0-9A-Za-z\\s])")
 
-  val PATTERN_ITALICS = Pattern.compile(
+  private val PATTERN_ITALICS = Pattern.compile(
       // only match _s surrounding words.
       "^\\b_" + "((?:__|\\\\[\\s\\S]|[^\\\\_])+?)_" + "\\b" +
           "|" +
@@ -39,16 +38,16 @@ object SimpleMarkdownRules {
           ")\\*(?!\\*)"
   )
 
-  fun <R> createBoldRule(): Rule<R, Node<R>> =
+  private fun <R> createBoldRule(): Rule<R, Node<R>> =
       createSimpleStyleRule(PATTERN_BOLD, { listOf(StyleSpan(Typeface.BOLD)) })
 
-  fun <R> createUnderlineRule(): Rule<R, Node<R>> =
+  private fun <R> createUnderlineRule(): Rule<R, Node<R>> =
       createSimpleStyleRule(PATTERN_UNDERLINE, { listOf(UnderlineSpan()) })
 
-  fun <R> createStrikethruRule(): Rule<R, Node<R>> =
+  private fun <R> createStrikethruRule(): Rule<R, Node<R>> =
       createSimpleStyleRule(PATTERN_STRIKETHRU, { listOf(StrikethroughSpan()) })
 
-  fun <R> createTextRule(): Rule<R, Node<R>> {
+  private fun <R> createTextRule(): Rule<R, Node<R>> {
     return object : Rule<R, Node<R>>(PATTERN_TEXT, true) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
         val node = TextNode<R>(matcher.group())
@@ -57,7 +56,7 @@ object SimpleMarkdownRules {
     }
   }
 
-  fun <R> createEscapeRule(): Rule<R, Node<R>> {
+  private fun <R> createEscapeRule(): Rule<R, Node<R>> {
     return object : Rule<R, Node<R>>(PATTERN_ESCAPE, false) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
         return ParseSpec.createTerminal(TextNode(matcher.group(1)))
@@ -65,7 +64,7 @@ object SimpleMarkdownRules {
     }
   }
 
-  fun <R> createItalicsRule(): Rule<R, Node<R>> {
+  private fun <R> createItalicsRule(): Rule<R, Node<R>> {
     return object : Rule<R, Node<R>>(PATTERN_ITALICS, false) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
         val startIndex: Int
@@ -103,7 +102,7 @@ object SimpleMarkdownRules {
   }
 
   @JvmStatic
-  fun <R> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> List<CharacterStyle>): Rule<R, Node<R>> {
+  private fun <R> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> List<CharacterStyle>): Rule<R, Node<R>> {
     return object : Rule<R, Node<R>>(pattern, false) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
         val node = StyleNode<R>(styleFactory())
