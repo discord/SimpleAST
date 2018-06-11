@@ -104,8 +104,8 @@ publishing {
 }
 
 bintray {
-    user = bintrayUser
-    key = bintrayApiKey
+    user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
+    key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
 
     publications = ['Release']
     pkg {
@@ -120,7 +120,9 @@ bintray {
         version {
             gpg {
                 sign = true
-                passphrase = discord_bintray_gpg_passphrase
+                passphrase = project.hasProperty('discord_bintray_gpg_passphrase') ?
+                        project.property('discord_bintray_gpg_passphrase') :
+                        System.getenv('DISCORD_BINTRAY_GPG_PASSPHRASE')
             }
         }
     }
