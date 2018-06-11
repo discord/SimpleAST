@@ -43,10 +43,6 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
 
       var foundRule = false
       for (rule in filteredRules) {
-        if (isNested && !rule.applyOnNestedParse) {
-          continue
-        }
-
         val matcher = rule.matcher.reset(inspectionSource)
 
         if (matcher.find()) {
