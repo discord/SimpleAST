@@ -7,9 +7,13 @@ import java.util.Stack
 open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDebugging: Boolean = false) {
 
   private val rules = ArrayList<Rule<R, out T>>()
+  private val nestedParseRules = ArrayList<Rule<R, out T>>()
 
   fun <C : T> addRule(rule: Rule<R, C>): Parser<R, T> {
     rules.add(rule)
+    if (rule.applyOnNestedParse) {
+      nestedParseRules.add(rule)
+    }
     return this
   }
 
@@ -29,7 +33,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
       remainingParses.add(ParseSpec(null, 0, source.length))
     }
 
-    val filteredRules = if (isNested) rules.filter { it.applyOnNestedParse } else rules
+    val resolvedRules = if (isNested) nestedParseRules else rules
 
     while (!remainingParses.isEmpty()) {
       val builder = remainingParses.pop()
@@ -42,7 +46,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
       val offset = builder.startIndex
 
       var foundRule = false
-      for (rule in filteredRules) {
+      for (rule in resolvedRules) {
         val matcher = rule.matcher.reset(inspectionSource)
 
         if (matcher.find()) {
