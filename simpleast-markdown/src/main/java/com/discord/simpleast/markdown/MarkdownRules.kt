@@ -23,7 +23,7 @@ import java.util.regex.Pattern
 object MarkdownRules {
   val LIST_ITEM = """^\*[ \t](.*)(?=\n|$)""".toPattern()
   val HEADER_ITEM = """^(#+)[ \t](.*)(?=\n|$)""".toPattern()
-  val HEADER_ITEM_ALT = """^(.*)(?=(?:#{3,})[\n$])""".toPattern()
+  val HEADER_ITEM_ALT = """^(.*)(?=(?:={3,})[\n$])""".toPattern()
 
   class ListItemRule<R> : Rule<R, Node<R>>(LIST_ITEM, false) {
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
@@ -35,19 +35,20 @@ object MarkdownRules {
     }
   }
 
-  sealed class HeaderRuleBase<R>(pattern: Pattern, private val styleSpan: CharacterStyle) :
+  sealed class HeaderRuleBase<R>(pattern: Pattern, private val groupIndex: Int, private val styleSpan: CharacterStyle) :
       Rule<R, Node<R>>(pattern, false) {
 
-    class HeaderRule<R>(styleSpan: CharacterStyle) : HeaderRuleBase<R>(HEADER_ITEM, styleSpan)
-    class HeaderRuleAlt<R>(styleSpan: CharacterStyle) : HeaderRuleBase<R>(HEADER_ITEM_ALT, styleSpan)
+    class HeaderRule<R>(styleSpan: CharacterStyle) : HeaderRuleBase<R>(HEADER_ITEM, 2, styleSpan)
+    class HeaderRuleAlt<R>(styleSpan: CharacterStyle) : HeaderRuleBase<R>(HEADER_ITEM_ALT, 1, styleSpan)
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
         : ParseSpec<R, Node<R>> {
       val node = StyleNode<R>(listOf(styleSpan))
-      return ParseSpec.createNonterminal(node, matcher.start(2), matcher.end(2))
+      return ParseSpec.createNonterminal(node, matcher.start(groupIndex), matcher.end(groupIndex))
     }
   }
 
+  @JvmStatic
   fun <R> createHeaderRules(context: Context, @StyleRes headerStyles: List<Int>) = listOf<HeaderRuleBase<R>>(
       HeaderRuleBase.HeaderRule(TextAppearanceSpan(context,headerStyles.first())),
       HeaderRuleBase.HeaderRuleAlt(TextAppearanceSpan(context,headerStyles.first()))
