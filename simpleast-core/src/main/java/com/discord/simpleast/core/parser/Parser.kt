@@ -4,6 +4,12 @@ import android.util.Log
 import com.discord.simpleast.core.node.Node
 import java.util.*
 
+
+/**
+ * @param R The render context, can be any object that holds what's required for rendering.
+ *          See [Node.render]
+ * @param T The type of nodes that are handled.
+ */
 open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDebugging: Boolean = false) {
 
   private val rules = ArrayList<Rule<R, out T>>()

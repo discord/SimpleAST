@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.SpannableStringBuilder
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import com.agarron.simpleast.R
@@ -26,12 +27,12 @@ class MainActivity : AppCompatActivity() {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
-    resultText = findViewById(R.id.result_text) as TextView
-    input = findViewById(R.id.input) as EditText
+    resultText = findViewById(R.id.result_text)
+    input = findViewById(R.id.input)
 
     input.setText("*t*")
 
-    findViewById(R.id.benchmark_btn).setOnClickListener {
+    findViewById<View>(R.id.benchmark_btn).setOnClickListener {
       val times = 50.0
       var totalDuration = 0L
       var i = 0
@@ -47,16 +48,16 @@ class MainActivity : AppCompatActivity() {
       Log.d("timer", "average parse time: " + totalDuration / times + " ms")
     }
 
-    findViewById(R.id.test_btn).setOnClickListener {
-val parser = Parser<RenderContext, Node<RenderContext>>()
-    .addRule(UserMentionRule())
-    .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
+    findViewById<View>(R.id.test_btn).setOnClickListener {
+      val parser = Parser<RenderContext, Node<RenderContext>>()
+          .addRule(UserMentionRule())
+          .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
-resultText.text = SimpleRenderer.render(
-    source = input.text,
-    parser = parser,
-    renderContext = RenderContext(mapOf(1234 to "User1234"))
-)
+      resultText.text = SimpleRenderer.render(
+          source = input.text,
+          parser = parser,
+          renderContext = RenderContext(mapOf(1234 to "User1234"))
+      )
     }
   }
 
@@ -92,23 +93,24 @@ ValueError: unknown url type: '/yts/jsbin/player-en_US-vflkk7pUE/base.js'
     }
   }
 
-class FooRule : Rule<Any?, Node<Any?>>(Pattern.compile("^<Foo>")) {
-  override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>>, isNested: Boolean): ParseSpec<Any?, Node<Any?>> {
-    return ParseSpec.createTerminal(TextNode("Bar"))
+  @Suppress("unused")
+  class FooRule : Rule<Any?, Node<Any?>>(Pattern.compile("^<Foo>")) {
+    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>>, isNested: Boolean): ParseSpec<Any?, Node<Any?>> {
+      return ParseSpec.createTerminal(TextNode("Bar"))
+    }
   }
-}
 
-data class RenderContext(val usernameMap: Map<Int, String>)
-class UserNode(private val userId: Int) : Node<RenderContext>() {
-  override fun render(builder: SpannableStringBuilder, renderContext: RenderContext) {
-    builder.append(renderContext.usernameMap[userId] ?: "Invalid User")
+  data class RenderContext(val usernameMap: Map<Int, String>)
+  class UserNode(private val userId: Int) : Node<RenderContext>() {
+    override fun render(builder: SpannableStringBuilder, renderContext: RenderContext) {
+      builder.append(renderContext.usernameMap[userId] ?: "Invalid User")
+    }
   }
-}
 
-class UserMentionRule : Rule<RenderContext, UserNode>(Pattern.compile("^<(\\d+)>")) {
-  override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode>, isNested: Boolean): ParseSpec<RenderContext, UserNode> {
-    return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()))
+  class UserMentionRule : Rule<RenderContext, UserNode>(Pattern.compile("^<(\\d+)>")) {
+    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode>, isNested: Boolean): ParseSpec<RenderContext, UserNode> {
+      return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()))
+    }
   }
-}
 }
 
