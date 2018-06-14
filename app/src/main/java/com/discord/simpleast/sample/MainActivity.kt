@@ -1,5 +1,6 @@
 package com.discord.simpleast.sample
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.SpannableStringBuilder
@@ -19,11 +20,32 @@ import com.discord.simpleast.markdown.MarkdownRules
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
+private const val SAMPLE_TEXT = """
+  Some really long introduction text that goes on forever explaining something.
+  * **bold item**
+  * another point that is really obvious but just explained to death and should be half the length in reality
+  * last item
+
+  Description of above
+  Title
+
+  # Conclusion H1
+  So in conclusion. This whole endeavour was just a really long waste of time.
+
+  ## Appendix H2
+  some other stuff that should go here
+
+  ### Sources H3
+  * mind's eye
+  * friend of a friend
+  """
+
 class MainActivity : AppCompatActivity() {
 
   private lateinit var resultText: TextView
   private lateinit var input: EditText
 
+  @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
@@ -31,14 +53,7 @@ class MainActivity : AppCompatActivity() {
     resultText = findViewById(R.id.result_text)
     input = findViewById(R.id.input)
 
-    input.setText("""
-      Some really long introduction text that goes on forever explaining something.
-      * **bold item**
-      * another point that is really obvious but just explained to death and should be half the length in reality
-      * last item
-      So in conclusion. This whole endeavour was just a really long waste of time.
-      """
-        .trimIndent())
+    input.setText(SAMPLE_TEXT.trimIndent())
 
     findViewById<View>(R.id.benchmark_btn).setOnClickListener {
       val times = 50.0
@@ -59,7 +74,8 @@ class MainActivity : AppCompatActivity() {
     findViewById<View>(R.id.test_btn).setOnClickListener {
       val parser = Parser<RenderContext, Node<RenderContext>>()
           .addRule(UserMentionRule())
-          .addRules(MarkdownRules.createExtremeBRSTXXrdMarkdownRules())
+          .addRules(MarkdownRules.createExtremeBRSTXXrdMarkdownRules(
+              this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_3, R.style.Demo_Header_3)))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
       resultText.text = SimpleRenderer.render(

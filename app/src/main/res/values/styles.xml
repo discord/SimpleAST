@@ -8,4 +8,22 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Demo.Header.1" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/header1</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Demo.Header.2" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/header2</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Demo.Header.3" parent="TextAppearance.AppCompat.Large">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/header3</item>
+        <item name="android:textStyle">italic</item>
+    </style>
+
 </resources>
