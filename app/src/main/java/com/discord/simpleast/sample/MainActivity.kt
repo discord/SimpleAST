@@ -22,20 +22,20 @@ import java.util.regex.Pattern
 
 private const val SAMPLE_TEXT = """
   Some really long introduction text that goes on forever explaining something.
+
+  Title italics word
+  =======
   * **bold item**
   * another point that is really obvious but just explained to death and should be half the length in reality
   * last item
 
-  Description of above
-  Title
-
-  # Conclusion H1
+  # Conclusion __H1__
   So in conclusion. This whole endeavour was just a really long waste of time.
 
-  ## Appendix H2
+  ## Appendix __H2__
   some other stuff that should go here
 
-  ### Sources H3
+  ### Sources __H3__
   * mind's eye
   * friend of a friend
   """
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
       val parser = Parser<RenderContext, Node<RenderContext>>()
           .addRule(UserMentionRule())
           .addRules(MarkdownRules.createExtremeBRSTXXrdMarkdownRules(
-              this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_3, R.style.Demo_Header_3)))
+              this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3)))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
       resultText.text = SimpleRenderer.render(

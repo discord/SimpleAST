@@ -16,6 +16,8 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher,
   constructor(pattern: Pattern, applyOnNestedParse: Boolean = false) :
       this(pattern.matcher(""), applyOnNestedParse)
 
+  open fun isLookBehind(lastCapture: String?) = true
+
   abstract fun parse(matcher: Matcher, parser: Parser<R, in T>, isNested: Boolean): ParseSpec<R, T>
 }
 
