@@ -22,6 +22,7 @@ object SimpleMarkdownRules {
   val PATTERN_STRIKETHRU = Pattern.compile("^~~(?=\\S)([\\s\\S]*?\\S)~~")
   val PATTERN_TEXT = """^[\s\S]+?(?=[^0-9A-Za-z\s\u00c0-\uffff]|\n\n| {2,}\n|\w+:\S|$)""".toPattern()
   val PATTERN_TEXT_ORIG = Pattern.compile("^[\\s\\S]+?(?=[^0-9A-Za-z\\s\\u00c0-\\uffff]|\\n\\n| {2,}\\n|\\w+:\\S|$)")
+  val PATTERN_NEWLINE = """^(?:\n *)*\n""".toPattern()
   val PATTERN_ESCAPE = Pattern.compile("^\\\\([^0-9A-Za-z\\s])")
 
   val PATTERN_ITALICS = Pattern.compile(
@@ -53,6 +54,15 @@ object SimpleMarkdownRules {
     return object : Rule<R, Node<R>>(PATTERN_TEXT, true) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
         val node = TextNode<R>(matcher.group())
+        return ParseSpec.createTerminal(node)
+      }
+    }
+  }
+
+  fun <R> createNewlineRule(): Rule<R, Node<R>> {
+    return object : Rule<R, Node<R>>(PATTERN_NEWLINE, true) {
+      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
+        val node = TextNode<R>("\n")
         return ParseSpec.createTerminal(node)
       }
     }
@@ -93,6 +103,7 @@ object SimpleMarkdownRules {
   fun <R> createSimpleMarkdownRules(includeTextRule: Boolean = true): MutableList<Rule<R, Node<R>>> {
     val rules = ArrayList<Rule<R, Node<R>>>()
     rules.add(createEscapeRule())
+    rules.add(createNewlineRule())
     rules.add(createBoldRule())
     rules.add(createUnderlineRule())
     rules.add(createItalicsRule())
