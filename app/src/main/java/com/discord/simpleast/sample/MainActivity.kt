@@ -23,12 +23,16 @@ import java.util.regex.Pattern
 private const val SAMPLE_TEXT = """
   Some really long introduction text that goes on forever explaining something.
 
+  FIRST.Title italics word
+  =======
+
   Title italics word
   =======
   * **bold item**
   * another point that is really obvious but just explained to death and should be half the length in reality
   * last item
 
+""" /* + """
   # Conclusion __H1__
   So in conclusion. This whole endeavour was just a really long waste of time.
 
@@ -38,7 +42,7 @@ private const val SAMPLE_TEXT = """
   ### Sources __H3__
   * mind's eye
   * friend of a friend
-  """
+  """*/
 
 class MainActivity : AppCompatActivity() {
 

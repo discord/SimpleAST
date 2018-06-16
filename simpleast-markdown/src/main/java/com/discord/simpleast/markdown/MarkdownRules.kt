@@ -13,9 +13,9 @@ import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.parser.ParseSpec
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
+import com.discord.simpleast.markdown.node.MarkdownHeaderLineNode
 import com.discord.simpleast.markdown.node.MarkdownListItemNode
 import java.util.regex.Matcher
-import java.util.regex.Pattern
 
 /**
  * Support for full markdown representations.
@@ -41,7 +41,7 @@ object MarkdownRules {
    * ### Header 3
    * ```
    */
-  val HEADER_ITEM = """^(#+)[ \t](.*)(?=\n|$)""".toPattern()
+  val HEADER_ITEM = """^ *(#+)[ \t](.*) *(?=\n|$)""".toPattern()
   /**
    * Handles alternate version of headers. Must have 3+ `=` characters.
    * Example:
@@ -50,12 +50,19 @@ object MarkdownRules {
    * ==================
    * ```
    */
-  val HEADER_ITEM_ALT = """^(?:={3,}?)(?=\n|$)""".toPattern()
+  val HEADER_ITEM_ALT = """^(\w*) *([^\n]+)\n *(=|-){3,} *(?=\n|$)""".toPattern()
 
   class ListItemRule<R> : Rule<R, Node<R>>(LIST_ITEM, false) {
 
-    override fun isLookBehind(lastCapture: String?): Boolean {
-      return lastCapture?.endsWith('\n') ?: true
+//    override fun isLookBehind(lastCapture: String?): Boolean {
+//      return lastCapture?.endsWith('\n') ?: true
+//    }
+
+    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
+      if (lastCapture?.endsWith('\n') != false) {
+        return super.match(inspectionSource, lastCapture)
+      }
+      return null
     }
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
@@ -67,30 +74,56 @@ object MarkdownRules {
     }
   }
 
-  sealed class HeaderRuleBase<R>(pattern: Pattern, private val groupIndex: Int,
-                                 private val styleSpanProvider: (Int) -> CharacterStyle) :
-      Rule<R, Node<R>>(pattern, false) {
+  class HeaderRule<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
+      Rule<R, Node<R>>(HEADER_ITEM, false) {
 
-    class HeaderRule<R>(styleSpan: (Int) -> CharacterStyle) :
-        HeaderRuleBase<R>(HEADER_ITEM, 2, styleSpan)
-    class HeaderRuleAlt<R>(styleSpan: (Int) -> CharacterStyle) :
-        HeaderRuleBase<R>(HEADER_ITEM_ALT, 1, styleSpan)
+//    override fun isLookBehind(lastCapture: String?): Boolean {
+//      return lastCapture?.endsWith('\n') ?: true
+//    }
 
-    override fun isLookBehind(lastCapture: String?): Boolean {
-      return lastCapture?.endsWith('\n') ?: true
+    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
+      if (lastCapture?.endsWith('\n') != false) {
+        return super.match(inspectionSource, lastCapture)
+      }
+      return null
     }
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
         : ParseSpec<R, Node<R>> {
       val firstGroup = matcher.group(1)
-      val numHeaderIndicators = firstGroup.count { it == '#' }
+      val numHeaderIndicators = firstGroup.length
       val node = StyleNode<R>(listOf(styleSpanProvider(numHeaderIndicators)))
-      return ParseSpec.createNonterminal(node, matcher.start(groupIndex), matcher.end(groupIndex))
+      return ParseSpec.createNonterminal(node, matcher.start(2), matcher.end(2))
+    }
+  }
+
+  class HeaderRuleLine<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
+      Rule<R, Node<R>>(HEADER_ITEM_ALT, false) {
+//    override fun isLookBehind(lastCapture: String?): Boolean {
+//      return lastCapture?.endsWith('\n') ?: true
+//    }
+
+    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
+      if (lastCapture?.endsWith('\n') != false) {
+        return super.match(inspectionSource, lastCapture)
+      }
+      return null
+    }
+
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
+        : ParseSpec<R, Node<R>> {
+      val headerStyleGroup = matcher.group(1)
+      val headerIndicator = when (headerStyleGroup) {
+        "=" -> 1
+        else -> 2
+      }
+      val node = MarkdownHeaderLineNode<R>(listOf(styleSpanProvider(headerIndicator)), matcher.end(1))
+      return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(2))
     }
   }
 
   @JvmStatic
-  fun <R> createHeaderRules(context: Context, @StyleRes headerStyles: List<Int>): List<HeaderRuleBase<R>> {
+  fun <R> createHeaderRules(context: Context, @StyleRes headerStyles: List<Int>): List<Rule<R, Node<R>>> {
     fun spanProvider(header: Int): CharacterStyle =
         when (header) {
           0 -> TextAppearanceSpan(context, headerStyles[0])
@@ -99,12 +132,12 @@ object MarkdownRules {
         }
 
     return listOf(
-        HeaderRuleBase.HeaderRule(::spanProvider),
-        HeaderRuleBase.HeaderRuleAlt(::spanProvider)
+        HeaderRule(::spanProvider),
+        HeaderRuleLine(::spanProvider)
     )
   }
 
   @JvmStatic
   fun <R> createExtremeBRSTXXrdMarkdownRules(context: Context, @StyleRes headerStyles: List<Int>) =
-      createHeaderRules<R>(context, headerStyles) + ListItemRule<R>()
+      createHeaderRules<R>(context, headerStyles) + ListItemRule()
 }

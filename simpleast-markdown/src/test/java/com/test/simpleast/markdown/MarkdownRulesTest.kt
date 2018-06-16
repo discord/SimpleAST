@@ -1,4 +1,4 @@
-package com.test.simpleast_markdown
+package com.test.simpleast.markdown
 
 import android.graphics.Typeface
 import android.text.style.StyleSpan
@@ -25,9 +25,9 @@ class MarkdownRulesTest {
   fun setup() {
     parser = Parser()
     parser.addRules<Node<Any>>(listOf(
-        MarkdownRules.ListItemRule(),
-        MarkdownRules.HeaderRuleBase.HeaderRule { StyleSpan(Typeface.BOLD) },
-        MarkdownRules.HeaderRuleBase.HeaderRuleAlt { StyleSpan(Typeface.ITALIC) }
+        MarkdownRules.HeaderRule { StyleSpan(Typeface.BOLD) },
+        MarkdownRules.HeaderRuleLine { StyleSpan(Typeface.ITALIC) },
+        MarkdownRules.ListItemRule()
     ))
     parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeTextRule = true))
     treeMatcher = TreeMatcher()
@@ -138,7 +138,7 @@ class MarkdownRulesTest {
   fun headerAlt() {
     val ast = parser.parse("""
       __Alt__ Header
-      ===
+      ======
       some content
       """.trimIndent())
 
@@ -160,14 +160,12 @@ class MarkdownRulesTest {
     Assert.assertEquals(" Header", (remainingWords as TextNode).content)
   }
 
-    @Test
-  fun headerAltAfterParagraph() {
-      val ast = parser.parse("""
-      Some really long introduction text that goes on forever explaining something.
-
-      Alt Header
-      =======
-      * item
+  @Test
+  fun headerParseBlockPunctuations() {
+    val ast = parser.parse("""
+      Should Succeed. __Alt__ Header
+      ======
+      some content
       """.trimIndent())
 
     val styledNodes = ArrayList<StyleNode<*>>()
@@ -175,11 +173,40 @@ class MarkdownRulesTest {
       if (it is StyleNode) {
         styledNodes.add(it)
       }
-      System.err.println("${it::class.java.simpleName}[${it.getChildren()?.size}]: $it")
     }
 
+    Assert.assertEquals(2, styledNodes.size)
+    val headerChildren = styledNodes[0].getChildren()?.toList()
+    Assert.assertEquals(2, headerChildren!!.size)
+
+    val italicWord = headerChildren[0]
+    val remainingWords = headerChildren[1]
+
+    italicWord.assertItemText("Alt")
+    Assert.assertEquals(" Header", (remainingWords as TextNode).content)
+  }
+
+  @Test
+  fun headerAltAfterParagraph() {
+      val ast = parser.parse("""
+      Some really long introduction text that goes on forever explaining something.
+
+      Alt Header
+      =======
+      stuff
+      """.trimIndent())
+
+    val styledNodes = ArrayList<StyleNode<*>>()
+    ASTUtils.traversePreOrder(ast) {
+      if (it is StyleNode) {
+        styledNodes.add(it)
+      }
+    }
+
+    System.err.println(ast.joinToString("\n"))
+
     Assert.assertEquals(1, styledNodes.size)
-    styledNodes[0].assertItemText("Alt Header")
+    styledNodes[0].assertItemText("\n\nAlt Header")
   }
 
   private fun Node<*>.assertItemText(expectedText: String) {

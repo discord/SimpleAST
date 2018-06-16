@@ -53,9 +53,8 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
           continue
         }
 
-        val matcher = rule.matcher.reset(inspectionSource)
-
-        if (rule.isLookBehind(lastCapture) && matcher.find()) {
+        val matcher = rule.match(inspectionSource, lastCapture)
+        if (matcher != null) {
           logMatch(rule, inspectionSource)
           val matcherSourceEnd = matcher.end() + offset
           foundRule = true
