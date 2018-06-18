@@ -16,11 +16,35 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher,
   constructor(pattern: Pattern, applyOnNestedParse: Boolean = false) :
       this(pattern.matcher(""), applyOnNestedParse)
 
+  /**
+   * Used to determine if the [Rule] applies to the [inspectionSource].
+   *
+   * @param inspectionSource Source string to apply the rule
+   * @param lastCapture Last captured source occuring before [inspectionSource]
+   *
+   * @return a [Matcher] if the rule applies, else null
+   */
   open fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
     matcher.reset(inspectionSource)
     return if (matcher.find()) matcher else null
   }
 
   abstract fun parse(matcher: Matcher, parser: Parser<R, in T>, isNested: Boolean): ParseSpec<R, T>
+
+  /**
+   * A [Rule] that ensures that the [matcher] is only executed if the preceding capture was a newline.
+   * e.g. this ensures that the regex parses from a newline.
+   */
+  abstract class BlockRule<R, T : Node<R>>(matcher: Matcher,
+                                           applyOnNestedParse: Boolean = false) :
+      Rule<R, T>(matcher, applyOnNestedParse) {
+
+    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
+      if (lastCapture?.endsWith('\n') != false) {
+        return super.match(inspectionSource, lastCapture)
+      }
+      return null
+    }
+  }
 }
 

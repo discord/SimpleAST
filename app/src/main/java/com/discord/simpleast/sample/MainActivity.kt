@@ -74,7 +74,7 @@ class MainActivity : AppCompatActivity() {
     findViewById<View>(R.id.test_btn).setOnClickListener {
       val parser = Parser<RenderContext, Node<RenderContext>>()
           .addRule(UserMentionRule())
-          .addRules(MarkdownRules.createExtremeBRSTXXrdMarkdownRules(
+          .addRules(MarkdownRules.createMarkdownRules(
               this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3)))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 

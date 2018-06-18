@@ -45,47 +45,27 @@ object MarkdownRules {
    * Handles alternate version of headers. Must have 3+ `=` characters.
    * Example:
    * ```
-   * Alternative Header
-   * ==================
+   * Alternative Header 1
+   * ====================
+   *
+   * Alternative Header 2
+   * ----------
    * ```
    */
   val HEADER_ITEM_ALT = """^(?: \t)*(.+)\n *(=|-){3,} *(?=\n|$)""".toPattern()
 
-  class ListItemRule<R> : Rule<R, Node<R>>(LIST_ITEM, false) {
-
-//    override fun isLookBehind(lastCapture: String?): Boolean {
-//      return lastCapture?.endsWith('\n') ?: true
-//    }
-
-    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
-      if (lastCapture?.endsWith('\n') != false) {
-        return super.match(inspectionSource, lastCapture)
-      }
-      return null
-    }
+  class ListItemRule<R>(private val bulletSpanProvider: () -> BulletSpan) :
+      Rule.BlockRule<R, Node<R>>(LIST_ITEM.matcher(""), false) {
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
         : ParseSpec<R, Node<R>> {
-      val node = MarkdownListItemNode<R> {
-        BulletSpan(24, Color.parseColor("#3F51B5"))
-      }
+      val node = MarkdownListItemNode<R>(bulletSpanProvider)
       return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
     }
   }
 
   class HeaderRule<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
-      Rule<R, Node<R>>(HEADER_ITEM, false) {
-
-//    override fun isLookBehind(lastCapture: String?): Boolean {
-//      return lastCapture?.endsWith('\n') ?: true
-//    }
-
-    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
-      if (lastCapture?.endsWith('\n') != false) {
-        return super.match(inspectionSource, lastCapture)
-      }
-      return null
-    }
+      Rule.BlockRule<R, Node<R>>(HEADER_ITEM.matcher(""), false) {
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
         : ParseSpec<R, Node<R>> {
@@ -97,17 +77,7 @@ object MarkdownRules {
   }
 
   class HeaderLineRule<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
-      Rule<R, Node<R>>(HEADER_ITEM_ALT, false) {
-//    override fun isLookBehind(lastCapture: String?): Boolean {
-//      return lastCapture?.endsWith('\n') ?: true
-//    }
-
-    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
-      if (lastCapture?.endsWith('\n') != false) {
-        return super.match(inspectionSource, lastCapture)
-      }
-      return null
-    }
+      Rule.BlockRule<R, Node<R>>(HEADER_ITEM_ALT.matcher(""), false) {
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
         : ParseSpec<R, Node<R>> {
@@ -137,6 +107,8 @@ object MarkdownRules {
   }
 
   @JvmStatic
-  fun <R> createExtremeBRSTXXrdMarkdownRules(context: Context, @StyleRes headerStyles: List<Int>) =
-      createHeaderRules<R>(context, headerStyles) + ListItemRule()
+  fun <R> createMarkdownRules(context: Context, @StyleRes headerStyles: List<Int>) =
+      createHeaderRules<R>(context, headerStyles) + ListItemRule {
+        BulletSpan(24, Color.parseColor("#6E7B7F"))
+      }
 }
