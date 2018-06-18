@@ -26,7 +26,7 @@ class MarkdownRulesTest {
     parser = Parser()
     parser.addRules<Node<Any>>(listOf(
         MarkdownRules.HeaderRule { StyleSpan(Typeface.BOLD) },
-        MarkdownRules.HeaderRuleLine { StyleSpan(Typeface.ITALIC) },
+        MarkdownRules.HeaderLineRule { StyleSpan(Typeface.ITALIC) },
         MarkdownRules.ListItemRule()
     ))
     parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeTextRule = true))
@@ -161,9 +161,32 @@ class MarkdownRulesTest {
   }
 
   @Test
+  fun headerAltAfterParagraph() {
+      val ast = parser.parse("""
+      Some really long introduction text that goes on forever explaining something.
+
+      Alt Header
+      =======
+      some content
+      """.trimIndent())
+
+    val styledNodes = ArrayList<StyleNode<*>>()
+    ASTUtils.traversePreOrder(ast) {
+      if (it is StyleNode) {
+        styledNodes.add(it)
+      }
+    }
+
+    Assert.assertEquals(1, styledNodes.size)
+    styledNodes[0].assertItemText("Alt Header")
+  }
+
+  @Test
   fun headerParseBlockPunctuations() {
     val ast = parser.parse("""
-      Should Succeed. __Alt__ Header
+      Intro text
+
+      Should Succeed. Alt Header
       ======
       some content
       """.trimIndent())
@@ -175,38 +198,12 @@ class MarkdownRulesTest {
       }
     }
 
-    Assert.assertEquals(2, styledNodes.size)
-    val headerChildren = styledNodes[0].getChildren()?.toList()
-    Assert.assertEquals(2, headerChildren!!.size)
-
-    val italicWord = headerChildren[0]
-    val remainingWords = headerChildren[1]
-
-    italicWord.assertItemText("Alt")
-    Assert.assertEquals(" Header", (remainingWords as TextNode).content)
-  }
-
-  @Test
-  fun headerAltAfterParagraph() {
-      val ast = parser.parse("""
-      Some really long introduction text that goes on forever explaining something.
-
-      Alt Header
-      =======
-      stuff
-      """.trimIndent())
-
-    val styledNodes = ArrayList<StyleNode<*>>()
-    ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode) {
-        styledNodes.add(it)
-      }
-    }
-
-    System.err.println(ast.joinToString("\n"))
-
     Assert.assertEquals(1, styledNodes.size)
-    styledNodes[0].assertItemText("\n\nAlt Header")
+    val headerChildren = styledNodes[0].getChildren()
+        ?.mapNotNull { it as? TextNode }
+        ?.joinToString("") { it.content }
+
+    Assert.assertEquals("Should Succeed. Alt Header", headerChildren)
   }
 
   private fun Node<*>.assertItemText(expectedText: String) {

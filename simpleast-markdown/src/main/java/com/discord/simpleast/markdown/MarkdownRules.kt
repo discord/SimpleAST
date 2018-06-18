@@ -13,7 +13,6 @@ import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.parser.ParseSpec
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
-import com.discord.simpleast.markdown.node.MarkdownHeaderLineNode
 import com.discord.simpleast.markdown.node.MarkdownListItemNode
 import java.util.regex.Matcher
 
@@ -50,7 +49,7 @@ object MarkdownRules {
    * ==================
    * ```
    */
-  val HEADER_ITEM_ALT = """^(\w*) *([^\n]+)\n *(=|-){3,} *(?=\n|$)""".toPattern()
+  val HEADER_ITEM_ALT = """^(?: \t)*(.+)\n *(=|-){3,} *(?=\n|$)""".toPattern()
 
   class ListItemRule<R> : Rule<R, Node<R>>(LIST_ITEM, false) {
 
@@ -97,7 +96,7 @@ object MarkdownRules {
     }
   }
 
-  class HeaderRuleLine<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
+  class HeaderLineRule<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
       Rule<R, Node<R>>(HEADER_ITEM_ALT, false) {
 //    override fun isLookBehind(lastCapture: String?): Boolean {
 //      return lastCapture?.endsWith('\n') ?: true
@@ -112,13 +111,13 @@ object MarkdownRules {
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
         : ParseSpec<R, Node<R>> {
-      val headerStyleGroup = matcher.group(1)
+      val headerStyleGroup = matcher.group(2)
       val headerIndicator = when (headerStyleGroup) {
         "=" -> 1
         else -> 2
       }
-      val node = MarkdownHeaderLineNode<R>(listOf(styleSpanProvider(headerIndicator)), matcher.end(1))
-      return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(2))
+      val node = StyleNode<R>(listOf(styleSpanProvider(headerIndicator)))
+      return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
     }
   }
 
@@ -133,7 +132,7 @@ object MarkdownRules {
 
     return listOf(
         HeaderRule(::spanProvider),
-        HeaderRuleLine(::spanProvider)
+        HeaderLineRule(::spanProvider)
     )
   }
 

@@ -26,23 +26,19 @@ private const val SAMPLE_TEXT = """
   FIRST.Title italics word
   =======
 
-  Title italics word
-  =======
+  Title _italics_ word
+  -----
   * **bold item**
   * another point that is really obvious but just explained to death and should be half the length in reality
-  * last item
 
-""" /* + """
   # Conclusion __H1__
   So in conclusion. This whole endeavour was just a really long waste of time.
 
   ## Appendix __H2__
-  some other stuff that should go here
-
   ### Sources __H3__
   * mind's eye
   * friend of a friend
-  """*/
+  """
 
 class MainActivity : AppCompatActivity() {
 

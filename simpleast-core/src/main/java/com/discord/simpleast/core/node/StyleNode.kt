@@ -15,8 +15,8 @@ open class StyleNode<R>(val styles: List<CharacterStyle>) : Node<R>() {
     styles.forEach { builder.setSpan(it, startIndex, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
   }
 
-  override fun toString() = "${javaClass.simpleName}:\n" +
-      getChildren()?.joinToString("\n", prefix = "->") {
+  override fun toString() = "${javaClass.simpleName} >\n" +
+      getChildren()?.joinToString("\n->", prefix = ">>", postfix = "\n>|") {
         it.toString()
       }
 
