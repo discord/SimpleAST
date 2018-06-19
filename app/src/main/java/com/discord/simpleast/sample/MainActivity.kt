@@ -1,5 +1,6 @@
 package com.discord.simpleast.sample
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.SpannableStringBuilder
@@ -15,14 +16,36 @@ import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
 import com.discord.simpleast.core.simple.SimpleMarkdownRules
 import com.discord.simpleast.core.simple.SimpleRenderer
+import com.discord.simpleast.markdown.MarkdownRules
 import java.util.regex.Matcher
 import java.util.regex.Pattern
+
+private const val SAMPLE_TEXT = """
+  Some really long introduction text that goes on forever explaining something.
+
+  FIRST.Title italics word
+  =======
+
+  Title _italics_ word
+  -----
+  * **bold item**
+  * another point that is really obvious but just explained to death and should be half the length in reality
+
+  # Conclusion __H1__
+  So in conclusion. This whole endeavour was just a really long waste of time.
+
+  ## Appendix __H2__
+  ### Sources __H3__
+  * mind's eye
+  * friend of a friend
+  """
 
 class MainActivity : AppCompatActivity() {
 
   private lateinit var resultText: TextView
   private lateinit var input: EditText
 
+  @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
@@ -30,7 +53,7 @@ class MainActivity : AppCompatActivity() {
     resultText = findViewById(R.id.result_text)
     input = findViewById(R.id.input)
 
-    input.setText("*t*")
+    input.setText(SAMPLE_TEXT.trimIndent())
 
     findViewById<View>(R.id.benchmark_btn).setOnClickListener {
       val times = 50.0
@@ -51,6 +74,8 @@ class MainActivity : AppCompatActivity() {
     findViewById<View>(R.id.test_btn).setOnClickListener {
       val parser = Parser<RenderContext, Node<RenderContext>>()
           .addRule(UserMentionRule())
+          .addRules(MarkdownRules.createMarkdownRules(
+              this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3)))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
       resultText.text = SimpleRenderer.render(

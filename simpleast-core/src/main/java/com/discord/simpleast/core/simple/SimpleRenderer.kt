@@ -45,7 +45,6 @@ object SimpleRenderer {
     for (node in ast) {
       node.render(builder, renderContext)
     }
-
     return builder
   }
 }

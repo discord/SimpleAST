@@ -10,4 +10,6 @@ open class TextNode<R> (val content: String) : Node<R>() {
   override fun render(builder: SpannableStringBuilder, renderContext: R) {
     builder.append(content)
   }
+
+  override fun toString() = "${javaClass.simpleName}[${getChildren()?.size}]: $content"
 }

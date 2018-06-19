@@ -31,6 +31,8 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
     val remainingParses = Stack<ParseSpec<R, out T>>()
     val topLevelNodes = ArrayList<T>()
 
+    var lastCapture: String? = null
+
     if (source != null && !source.isEmpty()) {
       remainingParses.add(ParseSpec(null, 0, source.length))
     }
@@ -51,9 +53,8 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
           continue
         }
 
-        val matcher = rule.matcher.reset(inspectionSource)
-
-        if (matcher.find()) {
+        val matcher = rule.match(inspectionSource, lastCapture)
+        if (matcher != null) {
           logMatch(rule, inspectionSource)
           val matcherSourceEnd = matcher.end() + offset
           foundRule = true
@@ -79,6 +80,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
             remainingParses.push(newBuilder)
           }
 
+          lastCapture = matcher.group(0)
 //          println("source: $inspectionSource -- depth: ${remainingParses.size}")
 
           break
