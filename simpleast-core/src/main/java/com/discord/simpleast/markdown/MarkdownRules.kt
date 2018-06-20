@@ -13,7 +13,6 @@ import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.parser.ParseSpec
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
-import com.discord.simpleast.markdown.node.MarkdownListItemNode
 import java.util.regex.Matcher
 
 /**

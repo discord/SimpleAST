@@ -1,6 +1,8 @@
-package com.test.simpleast.markdown
+package com.discord.simpleast.markdown
 
+import android.graphics.Color
 import android.graphics.Typeface
+import android.text.style.BulletSpan
 import android.text.style.StyleSpan
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
@@ -9,8 +11,6 @@ import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.simple.SimpleMarkdownRules
 import com.discord.simpleast.core.utils.ASTUtils
 import com.discord.simpleast.core.utils.TreeMatcher
-import com.discord.simpleast.markdown.MarkdownRules
-import com.discord.simpleast.markdown.node.MarkdownListItemNode
 import junit.framework.Assert
 import org.junit.Before
 import org.junit.Test
@@ -27,7 +27,7 @@ class MarkdownRulesTest {
     parser.addRules<Node<Any>>(listOf(
         MarkdownRules.HeaderRule { StyleSpan(Typeface.BOLD) },
         MarkdownRules.HeaderLineRule { StyleSpan(Typeface.ITALIC) },
-        MarkdownRules.ListItemRule()
+        MarkdownRules.ListItemRule { BulletSpan(24, Color.parseColor("#6E7B7F")) }
     ))
     parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeTextRule = true))
     treeMatcher = TreeMatcher()

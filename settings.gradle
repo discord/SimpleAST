@@ -1,1 +1,1 @@
-include ':app', ':simpleast-core', ':simpleast-markdown'
+include ':app', ':simpleast-core'

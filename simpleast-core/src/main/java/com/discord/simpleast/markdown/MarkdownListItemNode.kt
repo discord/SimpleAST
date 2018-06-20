@@ -1,4 +1,4 @@
-package com.discord.simpleast.markdown.node
+package com.discord.simpleast.markdown
 
 import android.text.SpannableStringBuilder
 import android.text.Spanned
