@@ -26,4 +26,17 @@
         <item name="android:textStyle">italic</item>
     </style>
 
+    <style name="Demo.Header.1.Add">
+        <item name="android:textColor">#11c766</item>
+    </style>
+
+    <style name="Demo.Header.1.Remove" >
+        <item name="android:textColor">#e13c54</item>
+    </style>
+
+    <style name="Demo.Header.1.Fix" >
+        <item name="android:textColor">#efc312</item>
+    </style>
+
+
 </resources>

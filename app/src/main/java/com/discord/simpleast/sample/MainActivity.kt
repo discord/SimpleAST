@@ -16,20 +16,23 @@ import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
 import com.discord.simpleast.core.simple.SimpleMarkdownRules
 import com.discord.simpleast.core.simple.SimpleRenderer
-import com.discord.simpleast.markdown.MarkdownRules
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 private const val SAMPLE_TEXT = """
   Some really long introduction text that goes on forever explaining something.
 
-  FIRST.Title italics word
+  Alt. __H1__ title
   =======
 
-  Title _italics_ word
+  Alt. __H1__ classed {remove}
+  =======
+
+  Alt. __H2__ title
   -----
   * **bold item**
   * another point that is really obvious but just explained to death and should be half the length in reality
+
 
   # Conclusion __H1__
   So in conclusion. This whole endeavour was just a really long waste of time.
@@ -74,8 +77,12 @@ class MainActivity : AppCompatActivity() {
     findViewById<View>(R.id.test_btn).setOnClickListener {
       val parser = Parser<RenderContext, Node<RenderContext>>()
           .addRule(UserMentionRule())
-          .addRules(MarkdownRules.createMarkdownRules(
-              this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3)))
+          .addRules(CustomMarkdownRules.createMarkdownRules(
+              this,
+              listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
+              listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
+//          .addRules(MarkdownRules.createMarkdownRules(
+//              this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3)))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
       resultText.text = SimpleRenderer.render(

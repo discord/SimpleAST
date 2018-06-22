@@ -75,18 +75,23 @@ object MarkdownRules {
     }
   }
 
-  class HeaderLineRule<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
+  open class HeaderLineRule<R>(private val styleSpanProvider: (Int) -> CharacterStyle) :
       Rule.BlockRule<R, Node<R>>(HEADER_ITEM_ALT.matcher(""), false) {
 
     override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
         : ParseSpec<R, Node<R>> {
+      val node = createHeaderStyleNode(matcher)
+      return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
+    }
+
+    protected fun createHeaderStyleNode(matcher: Matcher): StyleNode<R> {
       val headerStyleGroup = matcher.group(2)
       val headerIndicator = when (headerStyleGroup) {
         "=" -> 1
         else -> 2
       }
       val node = StyleNode<R>(listOf(styleSpanProvider(headerIndicator)))
-      return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
+      return node
     }
   }
 
