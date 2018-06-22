@@ -35,9 +35,9 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher,
    * A [Rule] that ensures that the [matcher] is only executed if the preceding capture was a newline.
    * e.g. this ensures that the regex parses from a newline.
    */
-  abstract class BlockRule<R, T : Node<R>>(matcher: Matcher,
+  abstract class BlockRule<R, T : Node<R>>(pattern: Pattern,
                                            applyOnNestedParse: Boolean = false) :
-      Rule<R, T>(matcher, applyOnNestedParse) {
+      Rule<R, T>(pattern, applyOnNestedParse) {
 
     override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
       if (lastCapture?.endsWith('\n') != false) {
