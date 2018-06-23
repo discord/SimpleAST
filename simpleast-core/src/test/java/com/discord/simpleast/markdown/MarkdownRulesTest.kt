@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.style.BulletSpan
 import android.text.style.StyleSpan
+import android.text.style.UnderlineSpan
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.node.TextNode
@@ -205,6 +206,50 @@ class MarkdownRulesTest {
 
     Assert.assertEquals("Should Succeed. Alt Header", headerChildren)
   }
+
+  @Test
+  fun headerAltClassed() {
+    val parser = Parser<Any, Node<Any>>()
+    parser.addRules<Node<Any>>(listOf(
+        MarkdownRules.HeaderRule { StyleSpan(Typeface.BOLD) },
+        MarkdownRules.HeaderLineClassedRule(
+            styleSpanProvider = { StyleSpan(Typeface.BOLD) },
+            classSpanProvider = { className ->
+              when (className) {
+                "testClass" -> UnderlineSpan()
+                else -> null
+              }
+            })
+    ))
+    parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeTextRule = true))
+
+    val ast = parser.parse("""
+      *Alt*. Header {testClass unknown}
+      ======
+      some content
+      """.trimIndent())
+
+    val styledNodes = ArrayList<StyleNode<*>>()
+    ASTUtils.traversePreOrder(ast) {
+      if (it is StyleNode) {
+        styledNodes.add(it)
+      }
+    }
+
+    val lheaderNode = styledNodes[0]
+    Assert.assertEquals(1, lheaderNode.styles.size)
+    Assert.assertTrue(lheaderNode.styles[0] is UnderlineSpan)
+
+    val headerChildren = lheaderNode.getChildren()?.toList()
+    Assert.assertEquals(2, headerChildren!!.size)
+
+    val italicWord = headerChildren[0]
+    val remainingWords = headerChildren[1]
+
+    italicWord.assertItemText("Alt")
+    Assert.assertEquals(". Header", (remainingWords as TextNode).content)
+  }
+
 
   private fun Node<*>.assertItemText(expectedText: String) {
     val textNode = getChildren()?.first() as? TextNode
