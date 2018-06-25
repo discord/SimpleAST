@@ -26,8 +26,15 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
     return this
   }
 
+  /**
+   * Transforms the [source] to a AST of [Node]s using the provided [rules].
+   *
+   * @param rules Ordered [List] of rules to use to convert the source to nodes.
+   *    If not set, the parser will use its global list of [Parser.rules].
+   */
   @JvmOverloads
-  fun parse(source: CharSequence?, isNested: Boolean = false): MutableList<T> {
+  fun parse(source: CharSequence?, isNested: Boolean = false,
+            rules: List<Rule<R, out T>> = this.rules): MutableList<T> {
     val remainingParses = Stack<ParseSpec<R, out T>>()
     val topLevelNodes = ArrayList<T>()
 
