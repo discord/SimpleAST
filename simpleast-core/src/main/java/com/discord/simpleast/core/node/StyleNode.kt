@@ -4,9 +4,14 @@ import android.text.SpannableStringBuilder
 import android.text.Spanned
 import android.text.style.CharacterStyle
 
-open class StyleNode<R>(val styles: List<CharacterStyle>) : Node<R>() {
 
-  override fun render(builder: SpannableStringBuilder, renderContext: R) {
+/**
+ * @param RC RenderContext
+ * @param T Type of Span to apply
+ */
+open class StyleNode<RC, T>(val styles: List<T>) : Node<RC>() {
+
+  override fun render(builder: SpannableStringBuilder, renderContext: RC) {
     val startIndex = builder.length
 
     // First render all child nodes, as these are the nodes we want to apply the styles to.
@@ -27,8 +32,8 @@ open class StyleNode<R>(val styles: List<CharacterStyle>) : Node<R>() {
      * the text content will be.
      */
     @JvmStatic
-    fun <R> createWithText(content: String, styles: List<CharacterStyle>): StyleNode<R> {
-      val styleNode = StyleNode<R>(styles)
+    fun <RC> createWithText(content: String, styles: List<CharacterStyle>): StyleNode<RC, CharacterStyle> {
+      val styleNode = StyleNode<RC, CharacterStyle>(styles)
       styleNode.addChild(TextNode(content))
       return styleNode
     }

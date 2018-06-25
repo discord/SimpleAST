@@ -80,7 +80,7 @@ object MarkdownRules {
 
     constructor(styleSpanProvider: (Int) -> CharacterStyle) : this(PATTERN_HEADER_ITEM, styleSpanProvider)
 
-    protected open fun createHeaderStyleNode(matcher: Matcher): StyleNode<R> {
+    protected open fun createHeaderStyleNode(matcher: Matcher): StyleNode<R, CharacterStyle> {
       val firstGroup = matcher.group(1)
       val numHeaderIndicators = firstGroup.length
       return StyleNode(listOf(styleSpanProvider(numHeaderIndicators)))
@@ -99,7 +99,7 @@ object MarkdownRules {
         : ParseSpec<R, Node<R>> = ParseSpec.createNonterminal(
         createHeaderStyleNode(matcher), matcher.start(1), matcher.end(1))
 
-    override fun createHeaderStyleNode(matcher: Matcher): StyleNode<R> {
+    override fun createHeaderStyleNode(matcher: Matcher): StyleNode<R, CharacterStyle> {
       val headerStyleGroup = matcher.group(2)
       val headerIndicator = when (headerStyleGroup) {
         "=" -> 1
@@ -120,16 +120,18 @@ object MarkdownRules {
    * ==========
    * ```
    *
+   * @param R RenderContext
+   * @param T type of span applied for classes
    * @see createClassedSuffixedRule
    */
-  open class HeaderLineClassedRule<R>(styleSpanProvider: (Int) -> CharacterStyle,
-                                      @Suppress("MemberVisibilityCanBePrivate")
-                                      protected val innerRules: List<Rule<R, Node<R>>>) :
+  open class HeaderLineClassedRule<R, T : Any>(styleSpanProvider: (Int) -> CharacterStyle,
+                                               @Suppress("MemberVisibilityCanBePrivate")
+                                               protected val innerRules: List<Rule<R, Node<R>>>) :
       MarkdownRules.HeaderLineRule<R>(styleSpanProvider) {
 
-    constructor(styleSpanProvider: (Int) -> CharacterStyle, classSpanProvider: (String) -> CharacterStyle?) :
+    constructor(styleSpanProvider: (Int) -> CharacterStyle, classSpanProvider: (String) -> T?) :
         this(styleSpanProvider,
-            listOf(createClassedSuffixedRule<R>(classSpanProvider))
+            listOf(createClassedSuffixedRule<R, T>(classSpanProvider))
                 + SimpleMarkdownRules.createSimpleMarkdownRules<R>(false)
                 + SimpleMarkdownRules.createTextRule())
 
@@ -154,13 +156,14 @@ object MarkdownRules {
 
     companion object {
       @JvmStatic
-      private fun <T> createClassedSuffixedRule(classSpanProvider: (String) -> CharacterStyle?): Rule<T, Node<T>> =
-          object : Rule<T, Node<T>>(PATTERN_HEADING_CLASS, true) {
-            override fun parse(matcher: Matcher, parser: Parser<T, in Node<T>>, isNested: Boolean): ParseSpec<T, Node<T>> {
+      private fun <RC, T : Any> createClassedSuffixedRule(classSpanProvider: (String) -> T?): Rule<RC, Node<RC>> =
+          object : Rule<RC, Node<RC>>(PATTERN_HEADING_CLASS, true) {
+            override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>>, isNested: Boolean)
+                : ParseSpec<RC, Node<RC>> {
               val classes = matcher.group(2).split(' ')
-              val classSpans = classes.mapNotNull(classSpanProvider)
+              val classSpans = classes.mapNotNull { classSpanProvider(it) }
 
-              val node = StyleNode<T>(classSpans)
+              val node = StyleNode<RC, T>(classSpans)
               return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
             }
           }
