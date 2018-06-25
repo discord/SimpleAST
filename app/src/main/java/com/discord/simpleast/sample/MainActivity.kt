@@ -25,7 +25,7 @@ private const val SAMPLE_TEXT = """
   Alt. __H1__ title
   =======
 
-  Alt. __H1__ classed {remove}
+  Alt. __H1__ classed {remove marginTop}
   =======
 
   Alt. __H2__ title

@@ -92,7 +92,7 @@ object SimpleMarkdownRules {
         val styles = ArrayList<CharacterStyle>(1)
         styles.add(StyleSpan(Typeface.ITALIC))
 
-        val node = StyleNode<R>(styles)
+        val node = StyleNode<R, CharacterStyle>(styles)
         return ParseSpec.createNonterminal(node, startIndex, endIndex)
       }
     }
@@ -117,7 +117,7 @@ object SimpleMarkdownRules {
   fun <R> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> List<CharacterStyle>): Rule<R, Node<R>> {
     return object : Rule<R, Node<R>>(pattern, false) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
-        val node = StyleNode<R>(styleFactory())
+        val node = StyleNode<R, CharacterStyle>(styleFactory())
         return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
       }
     }
