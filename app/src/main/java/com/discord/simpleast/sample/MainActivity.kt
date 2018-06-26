@@ -127,7 +127,7 @@ ValueError: unknown url type: '/yts/jsbin/player-en_US-vflkk7pUE/base.js'
 
   @Suppress("unused")
   class FooRule : Rule<Any?, Node<Any?>>(Pattern.compile("^<Foo>")) {
-    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>>, isNested: Boolean): ParseSpec<Any?, Node<Any?>> {
+    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>>): ParseSpec<Any?, Node<Any?>> {
       return ParseSpec.createTerminal(TextNode("Bar"))
     }
   }
@@ -140,7 +140,7 @@ ValueError: unknown url type: '/yts/jsbin/player-en_US-vflkk7pUE/base.js'
   }
 
   class UserMentionRule : Rule<RenderContext, UserNode>(Pattern.compile("^<(\\d+)>")) {
-    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode>, isNested: Boolean): ParseSpec<RenderContext, UserNode> {
+    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode>): ParseSpec<RenderContext, UserNode> {
       return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()))
     }
   }

@@ -33,8 +33,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
    *    If not set, the parser will use its global list of [Parser.rules].
    */
   @JvmOverloads
-  fun parse(source: CharSequence?, isNested: Boolean = false,
-            rules: List<Rule<R, out T>> = this.rules): MutableList<T> {
+  fun parse(source: CharSequence?, rules: List<Rule<R, out T>> = this.rules): MutableList<T> {
     val remainingParses = Stack<ParseSpec<R, out T>>()
     val topLevelNodes = ArrayList<T>()
 
@@ -56,17 +55,13 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
 
       var foundRule = false
       for (rule in rules) {
-        if (isNested && !rule.applyOnNestedParse) {
-          continue
-        }
-
         val matcher = rule.match(inspectionSource, lastCapture)
         if (matcher != null) {
           logMatch(rule, inspectionSource)
           val matcherSourceEnd = matcher.end() + offset
           foundRule = true
 
-          val newBuilder = rule.parse(matcher, this, isNested)
+          val newBuilder = rule.parse(matcher, this)
           val parent = builder.root
 
           newBuilder.root?.let {

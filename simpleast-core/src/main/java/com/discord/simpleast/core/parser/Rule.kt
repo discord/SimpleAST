@@ -9,12 +9,9 @@ import java.util.regex.Pattern
  *          See [Node.render]
  * @param T The type of nodes that are handled.
  */
-abstract class Rule<R, T : Node<R>>(val matcher: Matcher,
-                                    val applyOnNestedParse: Boolean = false) {
+abstract class Rule<R, T : Node<R>>(val matcher: Matcher) {
 
-  @JvmOverloads
-  constructor(pattern: Pattern, applyOnNestedParse: Boolean = false) :
-      this(pattern.matcher(""), applyOnNestedParse)
+  constructor(pattern: Pattern) : this(pattern.matcher(""))
 
   /**
    * Used to determine if the [Rule] applies to the [inspectionSource].
@@ -29,15 +26,13 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher,
     return if (matcher.find()) matcher else null
   }
 
-  abstract fun parse(matcher: Matcher, parser: Parser<R, in T>, isNested: Boolean): ParseSpec<R, T>
+  abstract fun parse(matcher: Matcher, parser: Parser<R, in T>): ParseSpec<R, T>
 
   /**
    * A [Rule] that ensures that the [matcher] is only executed if the preceding capture was a newline.
    * e.g. this ensures that the regex parses from a newline.
    */
-  abstract class BlockRule<R, T : Node<R>>(pattern: Pattern,
-                                           applyOnNestedParse: Boolean = false) :
-      Rule<R, T>(pattern, applyOnNestedParse) {
+  abstract class BlockRule<R, T : Node<R>>(pattern: Pattern) : Rule<R, T>(pattern) {
 
     override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
       if (lastCapture?.endsWith('\n') != false) {

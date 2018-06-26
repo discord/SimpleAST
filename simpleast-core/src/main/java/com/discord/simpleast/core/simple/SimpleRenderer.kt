@@ -32,12 +32,12 @@ object SimpleRenderer {
       parser.addRule(rule)
     }
 
-    return render(SpannableStringBuilder(), parser.parse(source, false), renderContext)
+    return render(SpannableStringBuilder(), parser.parse(source), renderContext)
   }
 
   @JvmStatic
   fun <R> render(source: CharSequence, parser: Parser<R, Node<R>>, renderContext: R): SpannableStringBuilder {
-    return render(SpannableStringBuilder(), parser.parse(source, false), renderContext)
+    return render(SpannableStringBuilder(), parser.parse(source), renderContext)
   }
 
   @JvmStatic
