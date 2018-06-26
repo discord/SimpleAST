@@ -41,17 +41,17 @@ object SimpleMarkdownRules {
   )
 
   fun <R> createBoldRule(): Rule<R, Node<R>> =
-      createSimpleStyleRule(PATTERN_BOLD, { listOf(StyleSpan(Typeface.BOLD)) })
+      createSimpleStyleRule(PATTERN_BOLD) { listOf(StyleSpan(Typeface.BOLD)) }
 
   fun <R> createUnderlineRule(): Rule<R, Node<R>> =
-      createSimpleStyleRule(PATTERN_UNDERLINE, { listOf(UnderlineSpan()) })
+      createSimpleStyleRule(PATTERN_UNDERLINE) { listOf(UnderlineSpan()) }
 
   fun <R> createStrikethruRule(): Rule<R, Node<R>> =
-      createSimpleStyleRule(PATTERN_STRIKETHRU, { listOf(StrikethroughSpan()) })
+      createSimpleStyleRule(PATTERN_STRIKETHRU) { listOf(StrikethroughSpan()) }
 
   fun <R> createTextRule(): Rule<R, Node<R>> {
-    return object : Rule<R, Node<R>>(PATTERN_TEXT, true) {
-      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
+    return object : Rule<R, Node<R>>(PATTERN_TEXT) {
+      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> {
         val node = TextNode<R>(matcher.group())
         return ParseSpec.createTerminal(node)
       }
@@ -59,8 +59,8 @@ object SimpleMarkdownRules {
   }
 
   fun <R> createNewlineRule(): Rule<R, Node<R>> {
-    return object : Rule<R, Node<R>>(PATTERN_NEWLINE, true) {
-      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
+    return object : Rule<R, Node<R>>(PATTERN_NEWLINE) {
+      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> {
         val node = TextNode<R>("\n")
         return ParseSpec.createTerminal(node)
       }
@@ -68,16 +68,16 @@ object SimpleMarkdownRules {
   }
 
   fun <R> createEscapeRule(): Rule<R, Node<R>> {
-    return object : Rule<R, Node<R>>(PATTERN_ESCAPE, false) {
-      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
+    return object : Rule<R, Node<R>>(PATTERN_ESCAPE) {
+      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> {
         return ParseSpec.createTerminal(TextNode(matcher.group(1)))
       }
     }
   }
 
   fun <R> createItalicsRule(): Rule<R, Node<R>> {
-    return object : Rule<R, Node<R>>(PATTERN_ITALICS, false) {
-      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
+    return object : Rule<R, Node<R>>(PATTERN_ITALICS) {
+      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> {
         val startIndex: Int
         val endIndex: Int
         val asteriskMatch = matcher.group(2)
@@ -114,13 +114,12 @@ object SimpleMarkdownRules {
   }
 
   @JvmStatic
-  fun <R> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> List<CharacterStyle>): Rule<R, Node<R>> {
-    return object : Rule<R, Node<R>>(pattern, false) {
-      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
-        val node = StyleNode<R, CharacterStyle>(styleFactory())
-        return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
+  fun <R> createSimpleStyleRule(pattern: Pattern, styleFactory: () -> List<CharacterStyle>) =
+      object : Rule<R, Node<R>>(pattern) {
+        override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> {
+          val node = StyleNode<R, CharacterStyle>(styleFactory())
+          return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
+        }
       }
-    }
-  }
 }
 

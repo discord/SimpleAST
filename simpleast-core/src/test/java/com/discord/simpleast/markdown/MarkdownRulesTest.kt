@@ -104,9 +104,9 @@ class MarkdownRulesTest {
       ### Header 3
       """.trimIndent())
 
-    val styledNodes = ArrayList<StyleNode<*>>()
+    val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode) {
+      if (it is StyleNode<*, *>) {
         styledNodes.add(it)
       }
     }
@@ -126,9 +126,9 @@ class MarkdownRulesTest {
       other content for listing # of items
       """.trimIndent())
 
-    val styledNodes = ArrayList<StyleNode<*>>()
+    val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode) {
+      if (it is StyleNode<*, *>) {
         styledNodes.add(it)
       }
     }
@@ -143,9 +143,9 @@ class MarkdownRulesTest {
       some content
       """.trimIndent())
 
-    val styledNodes = ArrayList<StyleNode<*>>()
+    val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode) {
+      if (it is StyleNode<*, *>) {
         styledNodes.add(it)
       }
     }
@@ -171,9 +171,9 @@ class MarkdownRulesTest {
       some content
       """.trimIndent())
 
-    val styledNodes = ArrayList<StyleNode<*>>()
+    val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode) {
+      if (it is StyleNode<*, *>) {
         styledNodes.add(it)
       }
     }
@@ -192,9 +192,9 @@ class MarkdownRulesTest {
       some content
       """.trimIndent())
 
-    val styledNodes = ArrayList<StyleNode<*>>()
+    val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode) {
+      if (it is StyleNode<*, *>) {
         styledNodes.add(it)
       }
     }
@@ -229,9 +229,9 @@ class MarkdownRulesTest {
       some content
       """.trimIndent())
 
-    val styledNodes = ArrayList<StyleNode<*>>()
+    val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode) {
+      if (it is StyleNode<*, *>) {
         styledNodes.add(it)
       }
     }

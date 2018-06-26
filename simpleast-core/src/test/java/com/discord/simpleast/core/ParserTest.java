@@ -4,13 +4,6 @@ import android.graphics.Typeface;
 import android.text.style.CharacterStyle;
 import android.text.style.StyleSpan;
 
-import com.discord.simpleast.core.node.Node;
-import com.discord.simpleast.core.node.StyleNode;
-import com.discord.simpleast.core.node.TextNode;
-import com.discord.simpleast.core.parser.Parser;
-import com.discord.simpleast.core.simple.SimpleMarkdownRules;
-import com.discord.simpleast.core.utils.TreeMatcher;
-
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -20,6 +13,13 @@ import org.junit.Test;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.discord.simpleast.core.node.Node;
+import com.discord.simpleast.core.node.StyleNode;
+import com.discord.simpleast.core.node.TextNode;
+import com.discord.simpleast.core.parser.Parser;
+import com.discord.simpleast.core.simple.SimpleMarkdownRules;
+import com.discord.simpleast.core.utils.TreeMatcher;
 
 public class ParserTest {
 
@@ -85,7 +85,7 @@ public class ParserTest {
 //            "t"
 //        + "______");
 
-        final StyleNode<Object> boldNode = new StyleNode<>(Collections.singletonList((CharacterStyle) new StyleSpan(Typeface.BOLD)));
+        final StyleNode<Object, ?> boldNode = new StyleNode<>(Collections.singletonList((CharacterStyle) new StyleSpan(Typeface.BOLD)));
         boldNode.addChild(new TextNode<>("bold "));
         boldNode.addChild(StyleNode.Companion.createWithText("and italics",
             Collections.singletonList((CharacterStyle) new StyleSpan(Typeface.ITALIC))));

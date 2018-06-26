@@ -10,7 +10,6 @@ import android.text.style.StyleSpan
 import android.text.style.TextAppearanceSpan
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
-import com.discord.simpleast.core.node.TextNode
 import com.discord.simpleast.core.parser.ParseSpec
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
@@ -65,9 +64,9 @@ object MarkdownRules {
   private val PATTERN_HEADING_CLASS = """^(.*) \{([\w ]+)\}\s*$""".toRegex().toPattern()
 
   class ListItemRule<R>(private val bulletSpanProvider: () -> BulletSpan) :
-      Rule.BlockRule<R, Node<R>>(PATTERN_LIST_ITEM, false) {
+      Rule.BlockRule<R, Node<R>>(PATTERN_LIST_ITEM) {
 
-    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>)
         : ParseSpec<R, Node<R>> {
       val node = MarkdownListItemNode<R>(bulletSpanProvider)
       return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
@@ -76,7 +75,7 @@ object MarkdownRules {
 
   open class HeaderRule<R>(pattern: Pattern,
                            protected val styleSpanProvider: (Int) -> CharacterStyle) :
-      Rule.BlockRule<R, Node<R>>(pattern, false) {
+      Rule.BlockRule<R, Node<R>>(pattern) {
 
     constructor(styleSpanProvider: (Int) -> CharacterStyle) : this(PATTERN_HEADER_ITEM, styleSpanProvider)
 
@@ -86,16 +85,16 @@ object MarkdownRules {
       return StyleNode(listOf(styleSpanProvider(numHeaderIndicators)))
     }
 
-    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
-        : ParseSpec<R, Node<R>> = ParseSpec.createNonterminal(
-        createHeaderStyleNode(matcher),
-        matcher.start(2), matcher.end(2))
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> =
+        ParseSpec.createNonterminal(
+            createHeaderStyleNode(matcher),
+            matcher.start(2), matcher.end(2))
   }
 
   open class HeaderLineRule<R>(styleSpanProvider: (Int) -> CharacterStyle) :
       HeaderRule<R>(PATTERN_HEADER_ITEM_ALT, styleSpanProvider) {
 
-    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean)
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>)
         : ParseSpec<R, Node<R>> = ParseSpec.createNonterminal(
         createHeaderStyleNode(matcher), matcher.start(1), matcher.end(1))
 
@@ -135,30 +134,28 @@ object MarkdownRules {
                 + SimpleMarkdownRules.createSimpleMarkdownRules<R>(false)
                 + SimpleMarkdownRules.createTextRule())
 
-    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, isNested: Boolean): ParseSpec<R, Node<R>> {
-      return if (isNested) {
-        ParseSpec.createTerminal(TextNode(matcher.group()))
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> {
+      // Allow the classSuffix rule to apply first, then the normal parsers
+      val children = parser.parse(matcher.group(1), innerRules)
+
+      @Suppress("UNCHECKED_CAST")
+      val node: Node<R> = if (children.size == 1) {
+        children.first() as Node<R>
       } else {
-        // allow the normal parsers to do their thing
-        val children = parser.parse(matcher.group(1), false, innerRules)
-        val node: Node<R> = if (children.size == 1) {
-          children.first() as Node<R>
-        } else {
-          createHeaderStyleNode(matcher).apply {
-            for (child in children) {
-              addChild(child as Node<R>)
-            }
+        createHeaderStyleNode(matcher).apply {
+          for (child in children) {
+            addChild(child as Node<R>)
           }
         }
-        ParseSpec.createTerminal(node)
       }
+      return ParseSpec.createTerminal(node)
     }
 
     companion object {
       @JvmStatic
       private fun <RC, T : Any> createClassedSuffixedRule(classSpanProvider: (String) -> T?): Rule<RC, Node<RC>> =
-          object : Rule<RC, Node<RC>>(PATTERN_HEADING_CLASS, true) {
-            override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>>, isNested: Boolean)
+          object : Rule<RC, Node<RC>>(PATTERN_HEADING_CLASS) {
+            override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>>)
                 : ParseSpec<RC, Node<RC>> {
               val classes = matcher.group(2).split(' ')
               val classSpans = classes.mapNotNull { classSpanProvider(it) }
@@ -170,6 +167,7 @@ object MarkdownRules {
     }
   }
 
+  @Suppress("MemberVisibilityCanBePrivate")
   @JvmStatic
   fun <R> createHeaderRules(context: Context, @StyleRes headerStyles: List<Int>): List<Rule<R, Node<R>>> {
     fun spanProvider(header: Int): CharacterStyle =
