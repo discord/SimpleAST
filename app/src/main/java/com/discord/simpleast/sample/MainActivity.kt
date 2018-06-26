@@ -81,8 +81,6 @@ class MainActivity : AppCompatActivity() {
               this,
               listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
               listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
-//          .addRules(MarkdownRules.createMarkdownRules(
-//              this, listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3)))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
       resultText.text = SimpleRenderer.render(
@@ -93,7 +91,11 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  private fun createTestText() = """[0;31mERROR:[0m Signature extraction failed: Traceback (most recent call last):
+  private fun createTestText() = """
+    Test __Inner **nested** rules__ as well as *look ahead* rules
+    ==========
+
+    [0;31mERROR:[0m Signature extraction failed: Traceback (most recent call last):
   File "/usr/local/lib/python3.5/dist-packages/youtube_dl/extractor/youtube.py", line 1011, in _decrypt_signature
     video_id, player_url, s
   File "/usr/local/lib/python3.5/dist-packages/youtube_dl/extractor/youtube.py", line 925, in _extract_signature_function
@@ -114,8 +116,9 @@ class MainActivity : AppCompatActivity() {
     self._parse()
   File "/usr/lib/python3.5/urllib/request.py", line 324, in _parse
     raise ValueError("unknown url type: %r" % self.full_url)
-ValueError: unknown url type: '/yts/jsbin/player-en_US-vflkk7pUE/base.js'
- (caused by ValueError("unknown url type: '/yts/jsbin/player-en_US-vflkk7pUE/base.js'",))"""
+  ValueError: unknown url type: '/yts/jsbin/player-en_US-vflkk7pUE/base.js'
+   (caused by ValueError("unknown url type: '/yts/jsbin/player-en_US-vflkk7pUE/base.js'",))
+ """
 
   private fun testParse(times: Int) {
     val text = createTestText()
