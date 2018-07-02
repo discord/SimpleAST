@@ -22,6 +22,8 @@ import java.util.regex.Pattern
 private const val SAMPLE_TEXT = """
   Some really long introduction text that goes on forever explaining something.
 
+  newline above
+
   Alt. __H1__ title
   =======
 
@@ -32,7 +34,6 @@ private const val SAMPLE_TEXT = """
   -----
   * **bold item**
   * another point that is really obvious but just explained to death and should be half the length in reality
-
 
   # Conclusion __H1__
   So in conclusion. This whole endeavour was just a really long waste of time.
@@ -75,20 +76,25 @@ class MainActivity : AppCompatActivity() {
     }
 
     findViewById<View>(R.id.test_btn).setOnClickListener {
-      val parser = Parser<RenderContext, Node<RenderContext>>()
-          .addRule(UserMentionRule())
-          .addRules(CustomMarkdownRules.createMarkdownRules(
-              this,
-              listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
-              listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
-          .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
-
-      resultText.text = SimpleRenderer.render(
-          source = input.text,
-          parser = parser,
-          renderContext = RenderContext(mapOf(1234 to "User1234"))
-      )
+      parseInput()
     }
+    parseInput()
+  }
+
+  private fun parseInput() {
+    val parser = Parser<RenderContext, Node<RenderContext>>()
+        .addRule(UserMentionRule())
+        .addRules(CustomMarkdownRules.createMarkdownRules(
+            this,
+            listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
+            listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
+        .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
+
+    resultText.text = SimpleRenderer.render(
+        source = input.text,
+        parser = parser,
+        renderContext = RenderContext(mapOf(1234 to "User1234"))
+    )
   }
 
   private fun createTestText() = """

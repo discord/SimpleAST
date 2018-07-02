@@ -94,4 +94,16 @@ public class ParserTest {
         final List<? extends Node> model = Collections.singletonList(boldNode);
         Assert.assertTrue(treeMatcher.matches(model, ast));
     }
+
+    @Test
+    public void testNewlineRule() {
+        final List<Node<Object>> ast = parser.parse("Some text\n\n\n  \n\n\nnewline above");
+
+        final List<? extends Node> model = Arrays.asList(
+            new TextNode<>("Some text"),
+            new TextNode<>("\n"),
+            new TextNode<>("\n"),
+            new TextNode<>("newline above"));
+        Assert.assertTrue("actual " + ast, treeMatcher.matches(model, ast));
+    }
 }
