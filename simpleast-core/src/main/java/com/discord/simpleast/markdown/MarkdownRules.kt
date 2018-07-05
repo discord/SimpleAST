@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
 import android.support.annotation.StyleRes
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import android.text.style.BulletSpan
 import android.text.style.CharacterStyle
 import android.text.style.StyleSpan
@@ -138,14 +140,44 @@ object MarkdownRules {
       // Allow the classSuffix rule to apply first, then the normal parsers
       val children = parser.parse(matcher.group(1), innerRules)
 
-      val node = createHeaderStyleNode(matcher).apply {
-        for (child in children) {
-          @Suppress("UNCHECKED_CAST")
-          addChild(child as Node<R>)
+      val defaultStyleNode = createHeaderStyleNode(matcher)
+      @Suppress("UNCHECKED_CAST")
+      val node: Node<R> = if (children.size == 1) {
+        val singleNode = children.first() as Node<R>
+        if (singleNode is HeaderClassNode<R, *>) {
+          singleNode.defaultHeaderStyles = defaultStyleNode.styles
+          singleNode
+        } else {
+          defaultStyleNode.apply { addChild(singleNode) }
+        }
+      } else {
+        createHeaderStyleNode(matcher).apply {
+          for (child in children) {
+            addChild(child as Node<R>)
+          }
         }
       }
       return ParseSpec.createTerminal(node)
     }
+      /**
+       * Denotes a part of the header that allows styling overrides using certain class names.
+       * Set [defaultHeaderStyles] to ensure that class styles are applied after the default styles.
+       */
+      class HeaderClassNode<RC, T>(styles: List<T>) : StyleNode<RC, T>(styles) {
+
+        var defaultHeaderStyles: List<Any>? = null
+
+        override fun render(builder: SpannableStringBuilder, renderContext: RC) {
+          val startIndex = builder.length
+
+          // First render all child nodes, as these are the nodes we want to apply the styles to.
+          getChildren()?.forEach { it.render(builder, renderContext) }
+
+          // Apply the default style first
+          defaultHeaderStyles?.forEach { builder.setSpan(it, startIndex, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
+          styles.forEach { builder.setSpan(it, startIndex, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) }
+        }
+      }
 
     companion object {
       @JvmStatic
@@ -156,7 +188,7 @@ object MarkdownRules {
               val classes = matcher.group(2).split(' ')
               val classSpans = classes.mapNotNull { classSpanProvider(it) }
 
-              val node = StyleNode<RC, T>(classSpans)
+              val node = HeaderClassNode<RC, T>(classSpans)
               return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
             }
           }
