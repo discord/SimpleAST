@@ -3,8 +3,8 @@ package com.discord.simpleast.markdown
 import android.graphics.Color
 import android.graphics.Typeface
 import android.text.style.BulletSpan
+import android.text.style.StrikethroughSpan
 import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.node.TextNode
@@ -27,7 +27,12 @@ class MarkdownRulesTest {
     parser = Parser()
     parser.addRules<Node<Any>>(listOf(
         MarkdownRules.HeaderRule { StyleSpan(Typeface.BOLD) },
-        MarkdownRules.HeaderLineRule { StyleSpan(Typeface.ITALIC) },
+        MarkdownRules.HeaderLineClassedRule(styleSpanProvider = { StyleSpan(Typeface.ITALIC) }) { className ->
+          when (className) {
+            "strike" -> StrikethroughSpan()
+            else -> null
+          }
+        },
         MarkdownRules.ListItemRule { BulletSpan(24, Color.parseColor("#6E7B7F")) }
     ))
     parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeTextRule = true))
@@ -118,6 +123,30 @@ class MarkdownRulesTest {
   }
 
   @Test
+  fun headersConsumeNewlines() {
+    val ast = parser.parse("""
+      Title
+      # Header 1
+
+
+      # Header 2
+      """.trimIndent())
+
+    val expected = listOf<Node<Any>>(
+        TextNode("Title"),
+        TextNode("\n"),
+        StyleNode.createWithText(
+            "Header 1",
+            listOf(StyleSpan(Typeface.BOLD))),
+        TextNode("\n"),
+        StyleNode.createWithText(
+            "Header 2",
+            listOf(StyleSpan(Typeface.BOLD)))
+    )
+    Assert.assertEquals("newlines consumed", expected.toString(), ast.toString())
+  }
+
+  @Test
   fun headersInvalidPrefix() {
     val ast = parser.parse("""
       a# Header 1
@@ -164,22 +193,24 @@ class MarkdownRulesTest {
   @Test
   fun headerAltAfterParagraph() {
       val ast = parser.parse("""
-      Some really long introduction text that goes on forever explaining something.
+      Some introduction text.
+
 
       Alt Header
       =======
       some content
       """.trimIndent())
 
-    val styledNodes = ArrayList<StyleNode<*, *>>()
-    ASTUtils.traversePreOrder(ast) {
-      if (it is StyleNode<*, *>) {
-        styledNodes.add(it)
-      }
-    }
-
-    Assert.assertEquals(1, styledNodes.size)
-    styledNodes[0].assertItemText("Alt Header")
+    val expected = listOf<Node<Any>>(
+        TextNode("Some introduction text"),
+        TextNode("."),
+        TextNode("\n"),
+        StyleNode.createWithText(
+            "Alt Header",
+            listOf(StyleSpan(Typeface.BOLD))),
+        TextNode("\nsome content")
+    )
+    Assert.assertEquals("newlines consumed", expected.toString(), ast.toString())
   }
 
   @Test
@@ -209,22 +240,8 @@ class MarkdownRulesTest {
 
   @Test
   fun headerAltClassed() {
-    val parser = Parser<Any, Node<Any>>()
-    parser.addRules<Node<Any>>(listOf(
-        MarkdownRules.HeaderRule { StyleSpan(Typeface.BOLD) },
-        MarkdownRules.HeaderLineClassedRule(
-            styleSpanProvider = { StyleSpan(Typeface.BOLD) },
-            classSpanProvider = { className ->
-              when (className) {
-                "testClass" -> UnderlineSpan()
-                else -> null
-              }
-            })
-    ))
-    parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeTextRule = true))
-
     val ast = parser.parse("""
-      *Alt*. Header {testClass unknown}
+      *Alt*. Header {strike unknown}
       ======
       some content
       """.trimIndent())
@@ -237,12 +254,13 @@ class MarkdownRulesTest {
     }
 
     val lheaderNode = styledNodes[0]
-    Assert.assertEquals(1, lheaderNode.styles.size)
-    Assert.assertTrue(lheaderNode.styles[0] is UnderlineSpan)
+    Assert.assertTrue(lheaderNode.styles.first() is StyleSpan)
 
-    val headerChildren = lheaderNode.getChildren()?.toList()
-    Assert.assertEquals(2, headerChildren!!.size)
+    val lheaderClassNode = lheaderNode.getChildren()?.firstOrNull() as? StyleNode<*, *>
+    Assert.assertEquals("unrecognized class not styled", 1, lheaderClassNode!!.styles.size)
+    Assert.assertTrue(lheaderClassNode.styles.first() is StrikethroughSpan)
 
+    val headerChildren = lheaderClassNode.getChildren()!!.toList()
     val italicWord = headerChildren[0]
     val remainingWords = headerChildren[1]
 

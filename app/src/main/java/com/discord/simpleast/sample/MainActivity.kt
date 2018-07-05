@@ -26,8 +26,9 @@ private const val SAMPLE_TEXT = """
 
   Alt. __H1__ title
   =======
+  stuff
 
-  Alt. __H1__ classed {remove marginTop}
+  Alt. __H1__ remove marginTop {remove marginTop}
   =======
 
   Alt. __H2__ title
@@ -37,6 +38,7 @@ private const val SAMPLE_TEXT = """
 
   # Conclusion __H1__
   So in conclusion. This whole endeavour was just a really long waste of time.
+
 
   ## Appendix __H2__
   ### Sources __H3__

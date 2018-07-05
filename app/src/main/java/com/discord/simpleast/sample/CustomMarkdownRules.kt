@@ -48,7 +48,7 @@ object CustomMarkdownRules {
             "add" -> TextAppearanceSpan(context, classStyles[0])
             "remove" -> TextAppearanceSpan(context, classStyles[1])
             "fix" -> TextAppearanceSpan(context, classStyles[2])
-            "marginTop" -> VerticalMarginSpan(topPx = marginTopPx, bottomPx = marginTopPx / 2)
+            "marginTop" -> VerticalMarginSpan(topPx = marginTopPx, bottomPx = 0)
             else -> null
           }
         }

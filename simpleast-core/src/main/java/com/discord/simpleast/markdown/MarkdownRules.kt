@@ -42,7 +42,7 @@ object MarkdownRules {
    * ### Header 3
    * ```
    */
-  val PATTERN_HEADER_ITEM = """^ *(#+)[ \t](.*) *(?=\n|$)""".toPattern()
+  val PATTERN_HEADER_ITEM = """^\s*(#+)[ \t](.*) *(?=\n|$)""".toPattern()
   /**
    * Handles alternate version of headers. Must have 3+ `=` characters.
    * Example:
@@ -54,7 +54,7 @@ object MarkdownRules {
    * ----------
    * ```
    */
-  val PATTERN_HEADER_ITEM_ALT = """^(?: \t)*(.+)\n *(=|-){3,} *(?=\n|$)""".toPattern()
+  val PATTERN_HEADER_ITEM_ALT = """^\s*(.+)\n *(=|-){3,} *(?=\n|$)""".toPattern()
 
   /**
    * Searches for the pattern:
@@ -138,14 +138,10 @@ object MarkdownRules {
       // Allow the classSuffix rule to apply first, then the normal parsers
       val children = parser.parse(matcher.group(1), innerRules)
 
-      @Suppress("UNCHECKED_CAST")
-      val node: Node<R> = if (children.size == 1) {
-        children.first() as Node<R>
-      } else {
-        createHeaderStyleNode(matcher).apply {
-          for (child in children) {
-            addChild(child as Node<R>)
-          }
+      val node = createHeaderStyleNode(matcher).apply {
+        for (child in children) {
+          @Suppress("UNCHECKED_CAST")
+          addChild(child as Node<R>)
         }
       }
       return ParseSpec.createTerminal(node)
