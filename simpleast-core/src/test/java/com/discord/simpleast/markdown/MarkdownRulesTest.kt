@@ -253,12 +253,13 @@ class MarkdownRulesTest {
       }
     }
 
-    val lheaderNode = styledNodes[0] as MarkdownRules.HeaderLineClassedRule.HeaderClassNode<*, *>
-    Assert.assertEquals("unrecognized class not styled", 1, lheaderNode.defaultHeaderStyles?.size)
-    Assert.assertTrue("default style applied", lheaderNode.defaultHeaderStyles?.firstOrNull() is StyleSpan)
+    val lheaderNode = styledNodes[0] as StyleNode
+    Assert.assertEquals("unrecognized class not styled", 1, lheaderNode.styles.size)
     Assert.assertTrue("classed style applied", lheaderNode.styles.first() is StrikethroughSpan)
+    val defaultHeaderStyleNode = lheaderNode.getChildren()?.firstOrNull() as StyleNode<*, *>
+    Assert.assertTrue("default style applied", defaultHeaderStyleNode.styles.firstOrNull() is StyleSpan)
 
-    val headerChildren = lheaderNode.getChildren()!!.toList()
+    val headerChildren = defaultHeaderStyleNode.getChildren()!!.toList()
     val italicWord = headerChildren[0]
     val remainingWords = headerChildren[1]
 
