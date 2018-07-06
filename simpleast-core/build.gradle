@@ -5,7 +5,7 @@ apply plugin: 'maven'
 apply plugin: 'maven-publish'
 
 group = 'com.discord'
-version = '1.1.0'
+version = '1.1.1'
 
 def pomConfig = {
     licenses {
