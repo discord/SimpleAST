@@ -82,7 +82,11 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
             remainingParses.push(newBuilder)
           }
 
-          lastCapture = matcher.group(0)
+          try {
+            lastCapture = matcher.group(0)
+          } catch (throwable: Throwable) {
+            throw ParseException(message = "matcher found no matches", source = source, cause = throwable)
+          }
 //          println("source: $inspectionSource -- depth: ${remainingParses.size}")
 
           break
@@ -92,7 +96,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
       }
 
       if (!foundRule) {
-        throw RuntimeException("failed to find rule to match source: \"$inspectionSource\"")
+        throw ParseException("failed to find rule to match source", source)
       }
     }
 
@@ -113,6 +117,9 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
 
   companion object {
 
-    private val TAG = "Parser"
+    private const val TAG = "Parser"
   }
+
+  class ParseException(message: String, source: CharSequence?, cause: Throwable? = null)
+    : RuntimeException("Error while parsing: $message \n Source: $source", cause)
 }
