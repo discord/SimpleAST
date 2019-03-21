@@ -31,6 +31,8 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
    *
    * @param rules Ordered [List] of rules to use to convert the source to nodes.
    *    If not set, the parser will use its global list of [Parser.rules].
+   *
+   * @throws ParseException for certain specific error flows.
    */
   @JvmOverloads
   fun parse(source: CharSequence?, rules: List<Rule<R, out T>> = this.rules): MutableList<T> {
