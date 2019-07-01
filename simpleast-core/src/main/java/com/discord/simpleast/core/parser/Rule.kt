@@ -41,5 +41,10 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher) {
       return null
     }
   }
+
+  /**
+   * Called when a new parse is started. Can be used to reset internal state between parses.
+   */
+  open fun onBeginNewParse() {}
 }
 

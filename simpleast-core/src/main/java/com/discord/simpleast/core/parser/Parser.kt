@@ -36,6 +36,10 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
    */
   @JvmOverloads
   fun parse(source: CharSequence?, rules: List<Rule<R, out T>> = this.rules): MutableList<T> {
+    for (rule in rules) {
+      rule.onBeginNewParse()
+    }
+
     val remainingParses = Stack<ParseSpec<R, out T>>()
     val topLevelNodes = ArrayList<T>()
 
