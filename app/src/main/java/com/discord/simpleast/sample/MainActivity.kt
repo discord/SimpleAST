@@ -44,6 +44,16 @@ private const val SAMPLE_TEXT = """
   ### Sources __H3__
   * mind's eye
   * friend of a friend
+  
+  > Quoted
+  Not quoted
+  >> Quote with literal > at the beginning
+  Not quoted
+  >>>The rest of the message is quoted
+  Even here
+  > Literal > at beginning of line
+  >>> Literal >>> at beginning of line
+  Still quoted
   """
 
 class MainActivity : AppCompatActivity() {
@@ -83,9 +93,14 @@ class MainActivity : AppCompatActivity() {
     parseInput()
   }
 
+  data class ParseState(override var isInQuote: Boolean) : CustomMarkdownRules.BlockQuoteState<ParseState> {
+    override fun clone(): ParseState = ParseState(isInQuote)
+  }
+
   private fun parseInput() {
-    val parser = Parser<RenderContext, Node<RenderContext>>()
+    val parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
         .addRule(UserMentionRule())
+        .addRule(CustomMarkdownRules.createBlockQuoteRule<RenderContext, ParseState>())
         .addRules(CustomMarkdownRules.createMarkdownRules(
             this,
             listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
@@ -95,6 +110,7 @@ class MainActivity : AppCompatActivity() {
     resultText.text = SimpleRenderer.render(
         source = input.text,
         parser = parser,
+        initialState = ParseState(false),
         renderContext = RenderContext(mapOf(1234 to "User1234"))
     )
   }
@@ -137,8 +153,8 @@ class MainActivity : AppCompatActivity() {
   }
 
   @Suppress("unused")
-  class FooRule : Rule<Any?, Node<Any?>>(Pattern.compile("^<Foo>")) {
-    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>>, state: Map<String, Any>): ParseSpec<Any?, Node<Any?>> {
+  class FooRule<S> : Rule<Any?, Node<Any?>, S>(Pattern.compile("^<Foo>")) {
+    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>, S>, state: S): ParseSpec<Any?, Node<Any?>, S> {
       return ParseSpec.createTerminal(TextNode("Bar"), state)
     }
   }
@@ -150,8 +166,8 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-  class UserMentionRule : Rule<RenderContext, UserNode>(Pattern.compile("^<(\\d+)>")) {
-    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode>, state: Map<String, Any>): ParseSpec<RenderContext, UserNode> {
+  class UserMentionRule<S> : Rule<RenderContext, UserNode, S>(Pattern.compile("^<(\\d+)>")) {
+    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode, S>, state: S): ParseSpec<RenderContext, UserNode, S> {
       return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()), state)
     }
   }

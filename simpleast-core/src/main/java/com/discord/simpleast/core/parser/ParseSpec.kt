@@ -14,14 +14,14 @@ import com.discord.simpleast.core.node.Node
  * For terminal subtrees, the root will simply be added to the tree and no additional parsing will
  * take place on the text.
  */
-class ParseSpec<R, T : Node<R>> {
+class ParseSpec<R, T : Node<R>, S> {
   val root: T?
   val isTerminal: Boolean
-  val state: Map<String, Any>
+  val state: S
   var startIndex: Int = 0
   var endIndex: Int = 0
 
-  constructor(root: T?, state: Map<String, Any>, startIndex: Int, endIndex: Int) {
+  constructor(root: T?, state: S, startIndex: Int, endIndex: Int) {
     this.root = root
     this.state = state
     this.isTerminal = false
@@ -29,7 +29,7 @@ class ParseSpec<R, T : Node<R>> {
     this.endIndex = endIndex
   }
 
-  constructor(root: T?, state: Map<String, Any>) {
+  constructor(root: T?, state: S) {
     this.root = root
     this.state = state
     this.isTerminal = true
@@ -43,12 +43,12 @@ class ParseSpec<R, T : Node<R>> {
   companion object {
 
     @JvmStatic
-    fun <R, T : Node<R>> createNonterminal(node: T?, state: Map<String, Any>, startIndex: Int, endIndex: Int): ParseSpec<R, T> {
+    fun <R, T : Node<R>, S> createNonterminal(node: T?, state: S, startIndex: Int, endIndex: Int): ParseSpec<R, T, S> {
       return ParseSpec(node, state, startIndex, endIndex)
     }
 
     @JvmStatic
-    fun <R, T : Node<R>> createTerminal(node: T?, state: Map<String, Any>): ParseSpec<R, T> {
+    fun <R, T : Node<R>, S> createTerminal(node: T?, state: S): ParseSpec<R, T, S> {
       return ParseSpec(node, state)
     }
   }

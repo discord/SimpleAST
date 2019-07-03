@@ -9,7 +9,7 @@ import java.util.regex.Pattern
  *          See [Node.render]
  * @param T The type of nodes that are handled.
  */
-abstract class Rule<R, T : Node<R>>(val matcher: Matcher) {
+abstract class Rule<R, T : Node<R>, S>(val matcher: Matcher) {
 
   constructor(pattern: Pattern) : this(pattern.matcher(""))
 
@@ -21,20 +21,20 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher) {
    *
    * @return a [Matcher] if the rule applies, else null
    */
-  open fun match(inspectionSource: CharSequence, lastCapture: String?, state: Map<String, Any>): Matcher? {
+  open fun match(inspectionSource: CharSequence, lastCapture: String?, state: S): Matcher? {
     matcher.reset(inspectionSource)
     return if (matcher.find()) matcher else null
   }
 
-  abstract fun parse(matcher: Matcher, parser: Parser<R, in T>, state: Map<String, Any>): ParseSpec<R, T>
+  abstract fun parse(matcher: Matcher, parser: Parser<R, in T, S>, state: S): ParseSpec<R, T, S>
 
   /**
    * A [Rule] that ensures that the [matcher] is only executed if the preceding capture was a newline.
    * e.g. this ensures that the regex parses from a newline.
    */
-  abstract class BlockRule<R, T : Node<R>>(pattern: Pattern) : Rule<R, T>(pattern) {
+  abstract class BlockRule<R, T : Node<R>, S>(pattern: Pattern) : Rule<R, T, S>(pattern) {
 
-    override fun match(inspectionSource: CharSequence, lastCapture: String?, state: Map<String, Any>): Matcher? {
+    override fun match(inspectionSource: CharSequence, lastCapture: String?, state: S): Matcher? {
       if (lastCapture?.endsWith('\n') != false) {
         return super.match(inspectionSource, lastCapture, state)
       }
