@@ -69,10 +69,10 @@ object MarkdownRules {
   class ListItemRule<R>(private val bulletSpanProvider: () -> BulletSpan) :
       Rule.BlockRule<R, Node<R>>(PATTERN_LIST_ITEM) {
 
-    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>)
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, state: Map<String, Any>)
         : ParseSpec<R, Node<R>> {
       val node = MarkdownListItemNode<R>(bulletSpanProvider)
-      return ParseSpec.createNonterminal(node, matcher.start(1), matcher.end(1))
+      return ParseSpec.createNonterminal(node, state, matcher.start(1), matcher.end(1))
     }
   }
 
@@ -87,18 +87,18 @@ object MarkdownRules {
       return StyleNode(listOf(styleSpanProvider(numHeaderIndicators)))
     }
 
-    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>): ParseSpec<R, Node<R>> =
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, state: Map<String, Any>): ParseSpec<R, Node<R>> =
         ParseSpec.createNonterminal(
-            createHeaderStyleNode(matcher.group(1)),
-            matcher.start(2), matcher.end(2))
+                createHeaderStyleNode(matcher.group(1)),
+                state, matcher.start(2), matcher.end(2))
   }
 
   open class HeaderLineRule<R>(pattern: Pattern = PATTERN_HEADER_ITEM_ALT, styleSpanProvider: (Int) -> CharacterStyle) :
       HeaderRule<R>(pattern, styleSpanProvider) {
 
-    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>)
+    override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>>, state: Map<String, Any>)
         : ParseSpec<R, Node<R>> = ParseSpec.createNonterminal(
-        createHeaderStyleNode(matcher.group(2)), matcher.start(1), matcher.end(1))
+            createHeaderStyleNode(matcher.group(2)), state, matcher.start(1), matcher.end(1))
 
     override fun createHeaderStyleNode(headerStyleGroup: String): StyleNode<R, CharacterStyle> {
       val headerIndicator = when (headerStyleGroup) {
@@ -136,7 +136,7 @@ object MarkdownRules {
             SimpleMarkdownRules.createSimpleMarkdownRules<RC>(false)
                 + SimpleMarkdownRules.createTextRule())
 
-    override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>>): ParseSpec<RC, Node<RC>> {
+    override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>>, state: Map<String, Any>): ParseSpec<RC, Node<RC>> {
       val defaultStyleNode = createHeaderStyleNode(matcher.group(4))
       val headerBody = matcher.group(1) ?: matcher.group(3)
       val children = parser.parse(headerBody, innerRules)
@@ -153,7 +153,7 @@ object MarkdownRules {
         defaultStyleNode
       }
 
-      return ParseSpec.createTerminal(headerNode)
+      return ParseSpec.createTerminal(headerNode, state)
     }
   }
 

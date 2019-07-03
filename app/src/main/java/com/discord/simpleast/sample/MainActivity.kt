@@ -138,8 +138,8 @@ class MainActivity : AppCompatActivity() {
 
   @Suppress("unused")
   class FooRule : Rule<Any?, Node<Any?>>(Pattern.compile("^<Foo>")) {
-    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>>): ParseSpec<Any?, Node<Any?>> {
-      return ParseSpec.createTerminal(TextNode("Bar"))
+    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>>, state: Map<String, Any>): ParseSpec<Any?, Node<Any?>> {
+      return ParseSpec.createTerminal(TextNode("Bar"), state)
     }
   }
 
@@ -151,8 +151,8 @@ class MainActivity : AppCompatActivity() {
   }
 
   class UserMentionRule : Rule<RenderContext, UserNode>(Pattern.compile("^<(\\d+)>")) {
-    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode>): ParseSpec<RenderContext, UserNode> {
-      return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()))
+    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode>, state: Map<String, Any>): ParseSpec<RenderContext, UserNode> {
+      return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()), state)
     }
   }
 }

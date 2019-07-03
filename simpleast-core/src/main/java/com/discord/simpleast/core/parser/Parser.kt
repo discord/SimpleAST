@@ -42,7 +42,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
     var lastCapture: String? = null
 
     if (source != null && !source.isEmpty()) {
-      remainingParses.add(ParseSpec(null, 0, source.length))
+      remainingParses.add(ParseSpec(null, mapOf(), 0, source.length))
     }
 
     while (!remainingParses.isEmpty()) {
@@ -57,13 +57,13 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
 
       var foundRule = false
       for (rule in rules) {
-        val matcher = rule.match(inspectionSource, lastCapture)
+        val matcher = rule.match(inspectionSource, lastCapture, builder.state)
         if (matcher != null) {
           logMatch(rule, inspectionSource)
           val matcherSourceEnd = matcher.end() + offset
           foundRule = true
 
-          val newBuilder = rule.parse(matcher, this)
+          val newBuilder = rule.parse(matcher, this, builder.state)
           val parent = builder.root
 
           newBuilder.root?.let {
@@ -73,7 +73,7 @@ open class Parser<R, T : Node<R>> @JvmOverloads constructor(private val enableDe
           // In case the last match didn't consume the rest of the source for this subtree,
           // make sure the rest of the source is consumed.
           if (matcherSourceEnd != builder.endIndex) {
-            remainingParses.push(ParseSpec.createNonterminal(parent, matcherSourceEnd, builder.endIndex))
+            remainingParses.push(ParseSpec.createNonterminal(parent, builder.state, matcherSourceEnd, builder.endIndex))
           }
 
           // We want to speak in terms of indices within the source string,

@@ -21,12 +21,12 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher) {
    *
    * @return a [Matcher] if the rule applies, else null
    */
-  open fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
+  open fun match(inspectionSource: CharSequence, lastCapture: String?, state: Map<String, Any>): Matcher? {
     matcher.reset(inspectionSource)
     return if (matcher.find()) matcher else null
   }
 
-  abstract fun parse(matcher: Matcher, parser: Parser<R, in T>): ParseSpec<R, T>
+  abstract fun parse(matcher: Matcher, parser: Parser<R, in T>, state: Map<String, Any>): ParseSpec<R, T>
 
   /**
    * A [Rule] that ensures that the [matcher] is only executed if the preceding capture was a newline.
@@ -34,9 +34,9 @@ abstract class Rule<R, T : Node<R>>(val matcher: Matcher) {
    */
   abstract class BlockRule<R, T : Node<R>>(pattern: Pattern) : Rule<R, T>(pattern) {
 
-    override fun match(inspectionSource: CharSequence, lastCapture: String?): Matcher? {
+    override fun match(inspectionSource: CharSequence, lastCapture: String?, state: Map<String, Any>): Matcher? {
       if (lastCapture?.endsWith('\n') != false) {
-        return super.match(inspectionSource, lastCapture)
+        return super.match(inspectionSource, lastCapture, state)
       }
       return null
     }

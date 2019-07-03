@@ -17,18 +17,21 @@ import com.discord.simpleast.core.node.Node
 class ParseSpec<R, T : Node<R>> {
   val root: T?
   val isTerminal: Boolean
+  val state: Map<String, Any>
   var startIndex: Int = 0
   var endIndex: Int = 0
 
-  constructor(root: T?, startIndex: Int, endIndex: Int) {
+  constructor(root: T?, state: Map<String, Any>, startIndex: Int, endIndex: Int) {
     this.root = root
+    this.state = state
     this.isTerminal = false
     this.startIndex = startIndex
     this.endIndex = endIndex
   }
 
-  constructor(root: T?) {
+  constructor(root: T?, state: Map<String, Any>) {
     this.root = root
+    this.state = state
     this.isTerminal = true
   }
 
@@ -40,13 +43,13 @@ class ParseSpec<R, T : Node<R>> {
   companion object {
 
     @JvmStatic
-    fun <R, T : Node<R>> createNonterminal(node: T?, startIndex: Int, endIndex: Int): ParseSpec<R, T> {
-      return ParseSpec(node, startIndex, endIndex)
+    fun <R, T : Node<R>> createNonterminal(node: T?, state: Map<String, Any>, startIndex: Int, endIndex: Int): ParseSpec<R, T> {
+      return ParseSpec(node, state, startIndex, endIndex)
     }
 
     @JvmStatic
-    fun <R, T : Node<R>> createTerminal(node: T?): ParseSpec<R, T> {
-      return ParseSpec(node)
+    fun <R, T : Node<R>> createTerminal(node: T?, state: Map<String, Any>): ParseSpec<R, T> {
+      return ParseSpec(node, state)
     }
   }
 }
