@@ -58,8 +58,8 @@ object CustomMarkdownRules {
   }
 
     interface BlockQuoteState<Self: BlockQuoteState<Self>> {
-        var isInQuote: Boolean
-        fun clone(): Self
+        val isInQuote: Boolean
+        fun newBlockQuoteState(isInQuote: Boolean): Self
     }
 
     /**
@@ -84,8 +84,7 @@ object CustomMarkdownRules {
 
                 override fun parse(matcher: Matcher, parser: Parser<RC, in BlockQuoteNode<RC>, S>, state: S): ParseSpec<RC, BlockQuoteNode<RC>, S> {
                     val groupIndex = if (matcher.group(1) != null) { 1 } else { 2 }
-                    val newState = state.clone()
-                    newState.isInQuote = true
+                    val newState = state.newBlockQuoteState(isInQuote = true)
                     return ParseSpec.createNonterminal(BlockQuoteNode(), newState, matcher.start(groupIndex), matcher.end(groupIndex))
                 }
             }

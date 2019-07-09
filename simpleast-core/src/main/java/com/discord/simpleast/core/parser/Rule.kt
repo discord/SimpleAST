@@ -8,6 +8,13 @@ import java.util.regex.Pattern
  * @param R The render context, can be any object that holds what's required for rendering.
  *          See [Node.render]
  * @param T The type of nodes that are handled.
+ * @param S The type of state that this rule needs to match and parse correctly. If the rule
+ *          doesn't need state, this is typically an unbounded generic that's just passed through
+ *          to the [ParseSpec]. If the rule *does* need state, this typically has a bound
+ *          indicating at least one of the interfaces that the concrete state class implements.
+ *          Note that states should **not** be mutated (since that would affect all subsequent
+ *          nodes, not just child nodes), and therefore will likely need some sort of clone method
+ *          in order to create a copy with different values to pass into the returned [ParseSpec].
  */
 abstract class Rule<R, T : Node<R>, S>(val matcher: Matcher) {
 

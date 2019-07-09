@@ -13,6 +13,11 @@ import com.discord.simpleast.core.node.Node
  *
  * For terminal subtrees, the root will simply be added to the tree and no additional parsing will
  * take place on the text.
+ *
+ * @param R The type of render context needed by the node that this contains.
+ * @param T The type of node that this contains.
+ * @param S The type of state that child nodes will use. This is mainly used to just pass through
+ *          the state back to the parser.
  */
 class ParseSpec<R, T : Node<R>, S> {
   val root: T?

@@ -93,8 +93,8 @@ class MainActivity : AppCompatActivity() {
     parseInput()
   }
 
-  data class ParseState(override var isInQuote: Boolean) : CustomMarkdownRules.BlockQuoteState<ParseState> {
-    override fun clone(): ParseState = ParseState(isInQuote)
+  data class ParseState(override val isInQuote: Boolean) : CustomMarkdownRules.BlockQuoteState<ParseState> {
+    override fun newBlockQuoteState(isInQuote: Boolean): ParseState = ParseState(isInQuote)
   }
 
   private fun parseInput() {
