@@ -22,22 +22,22 @@ object SimpleRenderer {
 
   @JvmStatic
   fun renderBasicMarkdown(source: CharSequence): SpannableStringBuilder {
-    return render(source, SimpleMarkdownRules.createSimpleMarkdownRules(), null)
+    return render(source, SimpleMarkdownRules.createSimpleMarkdownRules(), null, null)
   }
 
   @JvmStatic
-  fun <R> render(source: CharSequence, rules: Collection<Rule<R, Node<R>>>, renderContext: R): SpannableStringBuilder {
-    val parser = Parser<R, Node<R>>()
+  fun <R, S> render(source: CharSequence, rules: Collection<Rule<R, Node<R>, S>>, initialState: S, renderContext: R): SpannableStringBuilder {
+    val parser = Parser<R, Node<R>, S>()
     for (rule in rules) {
       parser.addRule(rule)
     }
 
-    return render(SpannableStringBuilder(), parser.parse(source), renderContext)
+    return render(SpannableStringBuilder(), parser.parse(source, initialState), renderContext)
   }
 
   @JvmStatic
-  fun <R> render(source: CharSequence, parser: Parser<R, Node<R>>, renderContext: R): SpannableStringBuilder {
-    return render(SpannableStringBuilder(), parser.parse(source), renderContext)
+  fun <R, S> render(source: CharSequence, parser: Parser<R, Node<R>, S>, renderContext: R, initialState: S): SpannableStringBuilder {
+    return render(SpannableStringBuilder(), parser.parse(source, initialState), renderContext)
   }
 
   @JvmStatic
