@@ -131,7 +131,7 @@ object MarkdownRules {
                                                protected val innerRules: List<Rule<RC, Node<RC>, S>>) :
       MarkdownRules.HeaderLineRule<RC, S>(PATTERN_HEADER_ITEM_ALT_CLASSED, styleSpanProvider) {
 
-    constructor(styleSpanProvider: (Int) -> CharacterStyle, classSpanProvider: (String) -> T?) :
+      constructor(styleSpanProvider: (Int) -> CharacterStyle, classSpanProvider: (String) -> T?) :
         this(styleSpanProvider, classSpanProvider,
             SimpleMarkdownRules.createSimpleMarkdownRules<RC, S>(false)
                 + SimpleMarkdownRules.createTextRule())

@@ -9,6 +9,7 @@ import java.util.*
  * @param R The render context, can be any object that holds what's required for rendering.
  *          See [Node.render]
  * @param T The type of nodes that are handled.
+ * @param S The state of the current parser.
  */
 open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enableDebugging: Boolean = false) {
 

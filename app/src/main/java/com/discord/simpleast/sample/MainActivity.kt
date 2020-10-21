@@ -18,7 +18,6 @@ import com.discord.simpleast.core.parser.Rule
 import com.discord.simpleast.core.simple.SimpleMarkdownRules
 import com.discord.simpleast.core.simple.SimpleRenderer
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -77,6 +76,7 @@ class MainActivity : AppCompatActivity() {
               this@MainActivity,
               listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
               listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
+          .addRule(CustomMarkdownRules.createCodeRule(this@MainActivity))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
       SimpleRenderer.render(
@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity() {
   }
 
   data class RenderContext(val usernameMap: Map<Int, String>)
+
   class UserNode(private val userId: Int) : Node<RenderContext>() {
     override fun render(builder: SpannableStringBuilder, renderContext: RenderContext) {
       builder.append(renderContext.usernameMap[userId] ?: "Invalid User")
