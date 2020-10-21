@@ -19,7 +19,7 @@ import org.junit.Test
 
 class MarkdownRulesTest {
 
-  private lateinit var parser: Parser<Any, Node<Any>>
+  private lateinit var parser: Parser<Any, Node<Any>, Any?>
   private lateinit var treeMatcher: TreeMatcher
 
   @Before
@@ -48,7 +48,7 @@ class MarkdownRulesTest {
       * item 2
 
       End
-    """.trimIndent())
+    """.trimIndent(), Unit)
 
     val listItemNodes = ArrayList<MarkdownListItemNode<*>>()
     ASTUtils.traversePreOrder(ast) {
@@ -68,7 +68,7 @@ class MarkdownRulesTest {
       List of stuff
       -* item 1
       =* item 2
-    """.trimIndent())
+    """.trimIndent(), Unit)
 
     val listItemNodes = ArrayList<MarkdownListItemNode<*>>()
     ASTUtils.traversePreOrder(ast) {
@@ -85,7 +85,8 @@ class MarkdownRulesTest {
     val ast = parser.parse("""
       List of stuff
       * item 1
-      * item 2""".trimIndent())
+      * item 2
+    """.trimIndent(), Unit)
 
     val listItemNodes = ArrayList<MarkdownListItemNode<*>>()
     ASTUtils.traversePreOrder(ast) {
@@ -107,7 +108,7 @@ class MarkdownRulesTest {
       some content
       ## Header 2
       ### Header 3
-      """.trimIndent())
+    """.trimIndent(), Unit)
 
     val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
@@ -130,7 +131,7 @@ class MarkdownRulesTest {
 
 
       # Header 2
-      """.trimIndent())
+    """.trimIndent(), Unit)
 
     val expected = listOf<Node<Any>>(
         TextNode("Title"),
@@ -153,7 +154,7 @@ class MarkdownRulesTest {
       some content
       -## Header 2
       other content for listing # of items
-      """.trimIndent())
+    """.trimIndent(), Unit)
 
     val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
@@ -170,7 +171,7 @@ class MarkdownRulesTest {
       __Alt__ Header
       ======
       some content
-      """.trimIndent())
+    """.trimIndent(), Unit)
 
     val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
@@ -192,14 +193,14 @@ class MarkdownRulesTest {
 
   @Test
   fun headerAltAfterParagraph() {
-      val ast = parser.parse("""
+    val ast = parser.parse("""
       Some introduction text.
 
 
       Alt Header
       =======
       some content
-      """.trimIndent())
+    """.trimIndent(), Unit)
 
     val expected = listOf<Node<Any>>(
         TextNode("Some introduction text"),
@@ -221,7 +222,7 @@ class MarkdownRulesTest {
       Should Succeed. Alt Header
       ======
       some content
-      """.trimIndent())
+    """.trimIndent(), Unit)
 
     val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
@@ -244,7 +245,7 @@ class MarkdownRulesTest {
       *Alt*. Header {strike unknown}
       ======
       some content
-      """.trimIndent())
+    """.trimIndent(), Unit)
 
     val styledNodes = ArrayList<StyleNode<*, *>>()
     ASTUtils.traversePreOrder(ast) {
