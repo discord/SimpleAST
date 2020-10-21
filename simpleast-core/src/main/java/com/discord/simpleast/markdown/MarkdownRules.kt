@@ -3,11 +3,11 @@ package com.discord.simpleast.markdown
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.support.annotation.StyleRes
 import android.text.style.BulletSpan
 import android.text.style.CharacterStyle
 import android.text.style.StyleSpan
 import android.text.style.TextAppearanceSpan
+import androidx.annotation.StyleRes
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.parser.ParseSpec

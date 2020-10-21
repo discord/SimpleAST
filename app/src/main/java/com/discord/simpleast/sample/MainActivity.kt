@@ -2,12 +2,12 @@ package com.discord.simpleast.sample
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.agarron.simpleast.R
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.TextNode

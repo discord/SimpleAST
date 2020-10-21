@@ -1,8 +1,8 @@
 package com.discord.simpleast.sample.spans
 
 import android.graphics.Paint
-import android.support.annotation.Dimension
 import android.text.style.LineHeightSpan
+import androidx.annotation.Dimension
 
 
 /**
