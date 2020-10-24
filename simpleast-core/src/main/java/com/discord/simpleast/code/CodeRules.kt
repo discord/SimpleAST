@@ -141,6 +141,14 @@ object CodeRules {
         "in|as|ref",
     )
 
+    val xmlRules = listOf<Rule<R, Node<R>, S>>(
+        Xml.PATTERN_XML_COMMENT
+            .toFullMatchRule(codeStyleProviders.commentStyleProvider),
+        Xml.createTagRule(codeStyleProviders),
+        PATTERN_LEADING_WS_CONSUMER.toFullMatchRule(),
+        PATTERN_TEXT.toFullMatchRule(),
+    )
+
     return mapOf(
         "kt" to kotlinRules,
         "kotlin" to kotlinRules,
@@ -150,6 +158,9 @@ object CodeRules {
 
         "rs" to rustRules,
         "rust" to rustRules,
+
+        "xml" to xmlRules,
+        "http" to xmlRules,
     )
   }
 
