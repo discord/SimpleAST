@@ -11,11 +11,9 @@ For example:
 "<@123456789> has \*\*joined the server\*\*." becomes "@AndyG has **joined the server**." Read more here: [How Discord Renders Rich Messages on the Android App](https://blog.discordapp.com/how-discord-renders-rich-messages-on-the-android-app-67b0e5d56fbe)
 
 # Using SimpleAST in your application
-If you are building with Gradle, simply add the following line to the dependencies section of your build.gradle file:
+If you are building with Gradle, see https://jitpack.io/#discord/SimpleAST/ for instructions:
 
-```
-implementation 'com.discord:simpleast:1.1.1'
-```
+Latest versions can be found on the [releases page](https://github.com/discord/SimpleAST/releases).
 
 # Basic Usage with SimpleMarkdownRenderer
 
