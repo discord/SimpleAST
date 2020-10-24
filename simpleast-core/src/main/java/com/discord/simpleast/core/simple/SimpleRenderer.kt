@@ -27,11 +27,7 @@ object SimpleRenderer {
 
   @JvmStatic
   fun <R, S> render(source: CharSequence, rules: Collection<Rule<R, Node<R>, S>>, initialState: S, renderContext: R): SpannableStringBuilder {
-    val parser = Parser<R, Node<R>, S>()
-    for (rule in rules) {
-      parser.addRule(rule)
-    }
-
+    val parser = Parser<R, Node<R>, S>().addRules(rules)
     return render(SpannableStringBuilder(), parser.parse(source, initialState), renderContext)
   }
 

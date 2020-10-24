@@ -14,6 +14,7 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
 
   private val rules = ArrayList<Rule<R, out T, S>>()
 
+  @Suppress("unused")
   fun addRule(rule: Rule<R, out T, S>) =
       this.apply { rules.add(rule) }
 

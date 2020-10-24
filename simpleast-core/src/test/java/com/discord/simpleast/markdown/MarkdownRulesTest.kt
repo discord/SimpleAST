@@ -136,11 +136,11 @@ class MarkdownRulesTest {
     val expected = listOf<Node<Any>>(
         TextNode("Title"),
         TextNode("\n"),
-        StyleNode.createWithText(
+        StyleNode.wrapText(
             "Header 1",
             listOf(StyleSpan(Typeface.BOLD))),
         TextNode("\n"),
-        StyleNode.createWithText(
+        StyleNode.wrapText(
             "Header 2",
             listOf(StyleSpan(Typeface.BOLD)))
     )
@@ -206,7 +206,7 @@ class MarkdownRulesTest {
         TextNode("Some introduction text"),
         TextNode("."),
         TextNode("\n"),
-        StyleNode.createWithText(
+        StyleNode.wrapText(
             "Alt Header",
             listOf(StyleSpan(Typeface.BOLD))),
         TextNode("\nsome content")
