@@ -62,8 +62,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun parseInput() {
     val parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
-        .addRule(UserMentionRule())
-        .addRule(CustomMarkdownRules.createBlockQuoteRule<RenderContext, ParseState>())
+        .addRules(UserMentionRule(), CustomMarkdownRules.createBlockQuoteRule())
         .addRules(CustomMarkdownRules.createMarkdownRules(
             this,
             listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),

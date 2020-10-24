@@ -25,7 +25,7 @@ class MarkdownRulesTest {
   @Before
   fun setup() {
     parser = Parser()
-    parser.addRules<Node<Any>>(listOf(
+    parser.addRules(
         MarkdownRules.HeaderRule { StyleSpan(Typeface.BOLD) },
         MarkdownRules.HeaderLineClassedRule(styleSpanProvider = { StyleSpan(Typeface.ITALIC) }) { className ->
           when (className) {
@@ -34,7 +34,7 @@ class MarkdownRulesTest {
           }
         },
         MarkdownRules.ListItemRule { BulletSpan(24, Color.parseColor("#6E7B7F")) }
-    ))
+    )
     parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeTextRule = true))
     treeMatcher = TreeMatcher()
     treeMatcher.registerDefaultMatchers()
