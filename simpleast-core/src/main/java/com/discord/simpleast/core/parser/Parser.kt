@@ -33,13 +33,13 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
    * @throws ParseException for certain specific error flows.
    */
   @JvmOverloads
-  fun parse(source: CharSequence?, initialState: S, rules: List<Rule<R, out T, S>> = this.rules): MutableList<T> {
+  fun parse(source: CharSequence, initialState: S, rules: List<Rule<R, out T, S>> = this.rules): MutableList<T> {
     val remainingParses = Stack<ParseSpec<R, out T, S>>()
     val topLevelNodes = ArrayList<T>()
 
     var lastCapture: String? = null
 
-    if (source != null && source.isNotEmpty()) {
+    if (source.isNotEmpty()) {
       remainingParses.add(ParseSpec(null, initialState, 0, source.length))
     }
 
@@ -50,7 +50,7 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
         break
       }
 
-      val inspectionSource = source?.subSequence(builder.startIndex, builder.endIndex) ?: continue
+      val inspectionSource = source.subSequence(builder.startIndex, builder.endIndex)
       val offset = builder.startIndex
 
       val (rule, matcher) = rules
