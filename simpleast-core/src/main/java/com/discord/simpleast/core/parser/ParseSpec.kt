@@ -19,14 +19,14 @@ import com.discord.simpleast.core.node.Node
  * @param S The type of state that child nodes will use. This is mainly used to just pass through
  *          the state back to the parser.
  */
-class ParseSpec<R, T : Node<R>, S> {
-  val root: T?
+class ParseSpec<R, S> {
+  val root:  Node<R>
   val isTerminal: Boolean
   val state: S
   var startIndex: Int = 0
   var endIndex: Int = 0
 
-  constructor(root: T?, state: S, startIndex: Int, endIndex: Int) {
+  constructor(root: Node<R>, state: S, startIndex: Int, endIndex: Int) {
     this.root = root
     this.state = state
     this.isTerminal = false
@@ -34,7 +34,7 @@ class ParseSpec<R, T : Node<R>, S> {
     this.endIndex = endIndex
   }
 
-  constructor(root: T?, state: S) {
+  constructor(root: Node<R>, state: S) {
     this.root = root
     this.state = state
     this.isTerminal = true
@@ -48,12 +48,12 @@ class ParseSpec<R, T : Node<R>, S> {
   companion object {
 
     @JvmStatic
-    fun <R, T : Node<R>, S> createNonterminal(node: T?, state: S, startIndex: Int, endIndex: Int): ParseSpec<R, T, S> {
+    fun <R, S> createNonterminal(node: Node<R>, state: S, startIndex: Int, endIndex: Int): ParseSpec<R, S> {
       return ParseSpec(node, state, startIndex, endIndex)
     }
 
     @JvmStatic
-    fun <R, T : Node<R>, S> createTerminal(node: T?, state: S): ParseSpec<R, T, S> {
+    fun <R, S> createTerminal(node: Node<R>, state: S): ParseSpec<R, S> {
       return ParseSpec(node, state)
     }
   }

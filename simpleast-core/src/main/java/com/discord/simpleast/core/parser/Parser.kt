@@ -33,14 +33,14 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
    * @throws ParseException for certain specific error flows.
    */
   @JvmOverloads
-  fun parse(source: CharSequence, initialState: S, rules: List<Rule<R, out T, S>> = this.rules): MutableList<T> {
-    val remainingParses = Stack<ParseSpec<R, out T, S>>()
-    val topLevelNodes = ArrayList<T>()
+  fun parse(source: CharSequence, initialState: S, rules: List<Rule<R, out T, S>> = this.rules): MutableList<Node<R>> {
+    val remainingParses = Stack<ParseSpec<R, S>>()
+    val topLevelRootNode = Node<R>()
 
     var lastCapture: String? = null
 
     if (source.isNotEmpty()) {
-      remainingParses.add(ParseSpec(null, initialState, 0, source.length))
+      remainingParses.add(ParseSpec(topLevelRootNode, initialState, 0, source.length))
     }
 
     while (!remainingParses.isEmpty()) {
@@ -68,11 +68,9 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
 
       val matcherSourceEnd = matcher.end() + offset
       val newBuilder = rule.parse(matcher, this, builder.state)
-      val parent = builder.root
 
-      newBuilder.root?.let {
-        parent?.addChild(it) ?: topLevelNodes.add(it)
-      }
+      val parent = builder.root
+      parent.addChild(newBuilder.root)
 
       // In case the last match didn't consume the rest of the source for this subtree,
       // make sure the rest of the source is consumed.
@@ -95,7 +93,7 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
       }
     }
 
-    return topLevelNodes
+    return topLevelRootNode.getChildren()?.toMutableList()?: arrayListOf()
   }
 
   private fun <R, T: Node<R>, S> logMatch(rule: Rule<R, T, S>, source: CharSequence) {
