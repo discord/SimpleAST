@@ -1,8 +1,8 @@
 package com.discord.simpleast.core.simple
 
-import android.support.annotation.StringRes
 import android.text.SpannableStringBuilder
 import android.widget.TextView
+import androidx.annotation.StringRes
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule

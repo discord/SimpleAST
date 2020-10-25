@@ -3,8 +3,8 @@ package com.discord.simpleast.sample
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.support.annotation.StyleRes
 import android.text.style.*
+import androidx.annotation.StyleRes
 import com.agarron.simpleast.R
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
@@ -24,8 +24,8 @@ import java.util.regex.Pattern
 object CustomMarkdownRules {
 
   fun <RC, S> createMarkdownRules(context: Context,
-                              @StyleRes headerStyles: List<Int>,
-                              @StyleRes classStyles: List<Int>) =
+                                  @StyleRes headerStyles: List<Int>,
+                                  @StyleRes classStyles: List<Int>) =
       createHeaderRules<RC, S>(context, headerStyles, classStyles) + MarkdownRules.ListItemRule {
         BulletSpan(24, Color.parseColor("#6E7B7F"))
       }
