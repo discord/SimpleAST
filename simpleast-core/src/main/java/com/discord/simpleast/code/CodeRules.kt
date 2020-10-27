@@ -59,14 +59,15 @@ object CodeRules {
   internal fun createWordPattern(vararg words: String) =
       Pattern.compile("""^\b(?:${words.joinToString("|")})\b""")
 
-  fun <R, S> Pattern.toFullMatchRule(
+  fun <R, S> Pattern.toMatchGroupRule(
+      group: Int = 0,
       stylesProvider: StyleNode.SpanProvider<R>? = null
   ) =
       object : Rule<R, Node<R>, S>(this) {
         override fun parse(
             matcher: Matcher, parser: Parser<R, in Node<R>, S>, state: S
         ): ParseSpec<R, S> {
-          val content = matcher.group()
+          val content = matcher.group(group).orEmpty()
           val node = stylesProvider
               ?.let { StyleNode.Text(content, it) }
               ?: TextNode(content)
@@ -101,13 +102,13 @@ object CodeRules {
         codeStyleProviders,
         additionalRules = listOf(
             createSingleLineCommentPattern("#")
-                .toFullMatchRule(codeStyleProviders.commentStyleProvider),
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
             Pattern.compile("""^"[\s\S]*?(?<!\\)"(?=\W|\s|$)""")
-                    .toFullMatchRule(codeStyleProviders.literalStyleProvider),
+                    .toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
             Pattern.compile("""^'[\s\S]*?(?<!\\)'(?=\W|\s|$)""")
-                    .toFullMatchRule(codeStyleProviders.literalStyleProvider),
+                    .toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
             Pattern.compile("""^@(\w+)""")
-                .toFullMatchRule(codeStyleProviders.genericsStyleProvider)),
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider)),
         definitions = arrayOf("class", "def", "lambda"),
         builtIns = arrayOf("True|False|None"),
         "from|import|global|nonlocal",
@@ -122,11 +123,11 @@ object CodeRules {
         codeStyleProviders,
         additionalRules = listOf(
             createSingleLineCommentPattern("//")
-                .toFullMatchRule(codeStyleProviders.commentStyleProvider),
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
             Pattern.compile("""^"[\s\S]*?(?<!\\)"(?=\W|\s|$)""")
-                .toFullMatchRule(codeStyleProviders.literalStyleProvider),
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
             Pattern.compile("""^#!?\[.*?\]\n""")
-                .toFullMatchRule(codeStyleProviders.genericsStyleProvider)),
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider)),
         definitions = arrayOf("struct", "trait", "mod"),
         builtIns = arrayOf(
             "Self|Result|Ok|Err|Option|None|Some",
@@ -143,10 +144,10 @@ object CodeRules {
 
     val xmlRules = listOf<Rule<R, Node<R>, S>>(
         Xml.PATTERN_XML_COMMENT
-            .toFullMatchRule(codeStyleProviders.commentStyleProvider),
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
         Xml.createTagRule(codeStyleProviders),
-        PATTERN_LEADING_WS_CONSUMER.toFullMatchRule(),
-        PATTERN_TEXT.toFullMatchRule(),
+        PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
+        PATTERN_TEXT.toMatchGroupRule(),
     )
 
     return mapOf(
@@ -175,11 +176,11 @@ object CodeRules {
       additionalRules +
           listOf(
               createDefinitionRule(codeStyleProviders, *definitions),
-              createWordPattern(*builtIns).toFullMatchRule(codeStyleProviders.genericsStyleProvider),
-              createWordPattern(*keywords).toFullMatchRule(codeStyleProviders.keywordStyleProvider),
-              PATTERN_NUMBERS.toFullMatchRule(codeStyleProviders.literalStyleProvider),
-              PATTERN_LEADING_WS_CONSUMER.toFullMatchRule(),
-              PATTERN_TEXT.toFullMatchRule(),
+              createWordPattern(*builtIns).toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
+              createWordPattern(*keywords).toMatchGroupRule(stylesProvider = codeStyleProviders.keywordStyleProvider),
+              PATTERN_NUMBERS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
+              PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
+              PATTERN_TEXT.toMatchGroupRule(),
           )
 
   /**

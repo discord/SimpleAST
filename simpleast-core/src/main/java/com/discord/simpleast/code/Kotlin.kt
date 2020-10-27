@@ -1,6 +1,6 @@
 package com.discord.simpleast.code
 
-import com.discord.simpleast.code.CodeRules.toFullMatchRule
+import com.discord.simpleast.code.CodeRules.toMatchGroupRule
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.parser.ParseSpec
@@ -134,9 +134,9 @@ object Kotlin {
       codeStyleProviders: CodeStyleProviders<RC>
   ): List<Rule<RC, Node<RC>, S>> =
       listOf(
-          PATTERN_KOTLIN_COMMENTS.toFullMatchRule(codeStyleProviders.commentStyleProvider),
-          PATTERN_KOTLIN_STRINGS.toFullMatchRule(codeStyleProviders.literalStyleProvider),
-          PATTERN_KOTLIN_ANNOTATION.toFullMatchRule(codeStyleProviders.genericsStyleProvider),
+          PATTERN_KOTLIN_COMMENTS.toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
+          PATTERN_KOTLIN_STRINGS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
+          PATTERN_KOTLIN_ANNOTATION.toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
           FieldNode.createFieldRule(codeStyleProviders),
           FunctionNode.createFunctionRule(codeStyleProviders),
       )
