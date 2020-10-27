@@ -76,7 +76,9 @@ class MainActivity : AppCompatActivity() {
               this@MainActivity,
               listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
               listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
-          .addRule(CustomMarkdownRules.createCodeRule(this@MainActivity))
+          .addRules(
+              CustomMarkdownRules.createCodeRule(this@MainActivity),
+              CustomMarkdownRules.createCodeInlineRule(this@MainActivity))
           .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
       SimpleRenderer.render(

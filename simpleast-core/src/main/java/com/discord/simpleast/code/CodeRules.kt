@@ -1,5 +1,7 @@
 package com.discord.simpleast.code
 
+import android.text.SpannableStringBuilder
+import android.text.Spanned
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.node.TextNode
@@ -36,6 +38,9 @@ object CodeRules {
    */
   val PATTERN_CODE_BLOCK: Pattern =
       Pattern.compile("""^```(?:([A-z0-9_+\-.]+))?(\s*)([^\n].*?)\n*```""", Pattern.DOTALL)
+
+  val PATTERN_CODE_INLINE: Pattern =
+      Pattern.compile("""^`(?:\s*)([^\n].*?)\n*`""", Pattern.DOTALL)
 
   private const val CODE_BLOCK_LANGUAGE_GROUP = 1
   private const val CODE_BLOCK_WS_PREFIX = 2
@@ -213,6 +218,34 @@ object CodeRules {
 
         val codeNode = CodeNode(content, language, textStyleProvider)
         return ParseSpec.createTerminal(wrapperNodeProvider(codeNode, startsWithNewline, state), state)
+      }
+    }
+  }
+
+  fun <R, S> createInlineCodeRule(
+      textStyleProvider: StyleNode.SpanProvider<R>,
+      bgStyleProvider: StyleNode.SpanProvider<R>,
+
+  ): Rule<R, Node<R>, S> {
+    return object : Rule<R, Node<R>, S>(PATTERN_CODE_INLINE) {
+      override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>, S>, state: S)
+          : ParseSpec<R, Node<R>, S> {
+        val codeBody = matcher.group(1).orEmpty()
+
+        val content = CodeNode.Content.Raw(codeBody)
+
+        val codeNode = CodeNode(content, null, textStyleProvider)
+        // We can't use a StyleNode here as we can't share background spans.
+        val node = object : Node.Parent<R>(codeNode) {
+          override fun render(builder: SpannableStringBuilder, renderContext: R) {
+            val startIndex = builder.length
+            super.render(builder, renderContext)
+            bgStyleProvider.get(renderContext).forEach {
+              builder.setSpan(it, startIndex, builder.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+            }
+          }
+        }
+        return ParseSpec.createTerminal(node, state)
       }
     }
   }

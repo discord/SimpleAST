@@ -119,4 +119,11 @@ object CustomMarkdownRules {
       }
     }
   }
+
+  fun <RC, S : BlockQuoteState<S>> createCodeInlineRule(context: Context): Rule<RC, Node<RC>, S> {
+    return CodeRules.createInlineCodeRule(
+        { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance)) },
+        { listOf(BackgroundColorSpan(Color.DKGRAY)) },
+    )
+  }
 }

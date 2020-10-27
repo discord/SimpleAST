@@ -6,7 +6,7 @@ object SampleTexts {
   const val TEXT = """
     Some really long **introduction** text that goes on **__forever__** explaining __something__.
   
-    single newline above
+    single `newline` above. `test` sentence
   """
 
   const val HEADERS = """
