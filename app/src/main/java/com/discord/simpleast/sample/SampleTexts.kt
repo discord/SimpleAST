@@ -73,6 +73,51 @@ object SampleTexts {
     ```
   """
 
+  private const val CODE_BLOCK_PROTO_BUFFERS = """
+    ProtoBuffers code block:
+    ```pb
+    package com.discord.test
+    
+    import "google/protobuf/descriptor.proto";
+
+    extend google.protobuf.MessageOptions {
+      optional int32 my_message_option = 50001;
+    }
+    
+    message MyMessage {
+      option (my_message_option) = 1234;
+    
+      optional string bar = 1 [default = "Test"];
+      oneof qux {
+        option (my_oneof_option) = 42;
+    
+        required string quux = 3;
+      }
+      repeated in64 ids = 4;
+    }
+    
+    enum MyEnum {
+      option (my_enum_option) = true;
+    
+      FOO = 1 [(my_enum_value_option) = 321];
+      BAR = 2;
+    }
+    
+    message RequestType {}
+    message ResponseType {}
+    
+    service MyService {
+      option (my_service_option) = FOO;
+    
+      rpc MyMethod(RequestType) returns(ResponseType) {
+        // Note:  my_method_option has type MyMessage.  We can set each field
+        //   within it using a separate "option" line.
+        option (my_method_option).bar = "Some string";
+      }
+    }
+    ```
+  """
+
   private const val CODE_BLOCK_PYTHON = """
     Python code block:
     ```py
@@ -150,6 +195,7 @@ object SampleTexts {
     }```
     
     $CODE_BLOCK_KOTLIN
+    $CODE_BLOCK_PROTO_BUFFERS
     $CODE_BLOCK_PYTHON
     $CODE_BLOCK_RUST
     $CODE_BLOCK_XML

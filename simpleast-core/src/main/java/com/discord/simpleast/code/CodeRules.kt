@@ -102,6 +102,22 @@ object CodeRules {
         builtIns = Kotlin.BUILT_INS,
         keywords = Kotlin.KEYWORDS)
 
+    val protoRules = createGenericCodeRules<R, S>(
+        codeStyleProviders,
+        additionalRules = listOf(
+            createSingleLineCommentPattern("//")
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
+            Pattern.compile("""^"[\s\S]*?(?<!\\)"(?=\W|\s|$)""")
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
+        ),
+        definitions = arrayOf("message|enum|extend|service"),
+        builtIns = arrayOf("true|false",
+            "string|bool|double|float|bytes",
+            "int32|uint32|sint32|int64|unit64|sint64",
+            "map"),
+        "required|repeated|optional|option|oneof|default|reserved",
+        "package|import",
+        "rpc|returns")
 
     val pythonRules = createGenericCodeRules<R, S>(
         codeStyleProviders,
@@ -158,6 +174,10 @@ object CodeRules {
     return mapOf(
         "kt" to kotlinRules,
         "kotlin" to kotlinRules,
+
+        "protobuf" to protoRules,
+        "proto" to protoRules,
+        "pb" to protoRules,
 
         "py" to pythonRules,
         "python" to pythonRules,
