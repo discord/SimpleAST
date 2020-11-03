@@ -42,7 +42,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "// Inlined",
         "// Line comment",
         "/// Doc")
@@ -57,7 +57,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "# Inlined",
         "# Line comment")
   }
@@ -73,7 +73,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         """"maybe"""",
         """"lyte"""",
         """"hello
@@ -91,7 +91,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         """"maybe"""",
         """"lyte"""",
         """"hello
@@ -111,7 +111,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "0", "12", "123", "456"
     )
   }
@@ -126,7 +126,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "@Route",
         "def", " get",
         "pass"
@@ -144,7 +144,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "#[derive(HelperAttr)]\n",
         "struct", " Struct",
 //        "#[helper]"  // Not supported
@@ -176,7 +176,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "mod", " test",
         "use", "Arc",
         "pub", "struct", " Event",
@@ -206,7 +206,7 @@ class CodeRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "from", "import", "as",
         "def", " hello_world", "self",
         "try",

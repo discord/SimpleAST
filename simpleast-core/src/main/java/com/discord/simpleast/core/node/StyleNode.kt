@@ -30,7 +30,7 @@ open class StyleNode<RC, T>(val styles: List<T>) : Node.Parent<RC>() {
    *
    * @see TextNode
    */
-  class Text<RC>(content: String, val stylesProvider: SpanProvider<RC>) : TextNode<RC>(content) {
+  class TextStyledNode<RC>(content: String, val stylesProvider: SpanProvider<RC>) : TextNode<RC>(content) {
     override fun render(builder: SpannableStringBuilder, renderContext: RC) {
       val startIndex = builder.length
       super.render(builder, renderContext)

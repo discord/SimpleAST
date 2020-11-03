@@ -39,10 +39,10 @@ object Kotlin {
       pre: String, generic: String?, signature: String, params: String,
       codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
-      StyleNode.Text(pre, codeStyleProviders.keywordStyleProvider),
-      generic?.let { StyleNode.Text(it, codeStyleProviders.genericsStyleProvider) },
-      StyleNode.Text(signature, codeStyleProviders.identifierStyleProvider),
-      StyleNode.Text(params, codeStyleProviders.paramsStyleProvider),
+      StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
+      generic?.let { StyleNode.TextStyledNode(it, codeStyleProviders.genericsStyleProvider) },
+      StyleNode.TextStyledNode(signature, codeStyleProviders.identifierStyleProvider),
+      StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider),
   ) {
     companion object {
 
@@ -74,8 +74,8 @@ object Kotlin {
       definition: String, name: String,
       codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
-      StyleNode.Text(definition, codeStyleProviders.keywordStyleProvider),
-      StyleNode.Text(name, codeStyleProviders.identifierStyleProvider),
+      StyleNode.TextStyledNode(definition, codeStyleProviders.keywordStyleProvider),
+      StyleNode.TextStyledNode(name, codeStyleProviders.identifierStyleProvider),
   ) {
     companion object {
       /**

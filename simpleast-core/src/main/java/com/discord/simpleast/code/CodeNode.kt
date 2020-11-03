@@ -58,8 +58,8 @@ open class CodeNode<RC>(
       pre: String, name: String,
       codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
-      StyleNode.Text(pre, codeStyleProviders.keywordStyleProvider),
-      StyleNode.Text(name, codeStyleProviders.typesStyleProvider)
+      StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
+      StyleNode.TextStyledNode(name, codeStyleProviders.typesStyleProvider)
   )
 }
 

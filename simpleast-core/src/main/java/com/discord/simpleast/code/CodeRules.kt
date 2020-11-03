@@ -74,7 +74,7 @@ object CodeRules {
         ): ParseSpec<R, S> {
           val content = matcher.group(group).orEmpty()
           val node = stylesProvider
-              ?.let { StyleNode.Text(content, it) }
+              ?.let { StyleNode.TextStyledNode(content, it) }
               ?: TextNode(content)
           return ParseSpec.createTerminal(node, state)
         }

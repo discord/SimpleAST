@@ -44,7 +44,7 @@ class KotlinRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         """
           /** Multiline
               Comment
@@ -63,7 +63,7 @@ class KotlinRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         """"hello"""",
         """"world"""")
   }
@@ -81,7 +81,7 @@ class KotlinRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "\"\"",
         """
           ${'"'}
@@ -102,7 +102,7 @@ class KotlinRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "@Test",
         "@Nullable",
     )
@@ -137,7 +137,7 @@ class KotlinRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         """
         /*
           private override fun <T> test(x:T) {
@@ -174,7 +174,7 @@ class KotlinRulesTest {
       }
       ```
     """.trimIndent(), TestState())
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "package", "import",
         "while", "true", "123", "break",
         "if", "false",
@@ -191,7 +191,7 @@ class KotlinRulesTest {
       add(123,456)
       ```
     """.trimIndent(), TestState())
-    ast.assertNodeContents<StyleNode.Text<*>>(
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
             "0", "12", "123", "456"
    )
   }
