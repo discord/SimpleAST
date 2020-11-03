@@ -62,8 +62,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun parseInput() {
     val parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
-        .addRule(UserMentionRule())
-        .addRule(CustomMarkdownRules.createBlockQuoteRule<RenderContext, ParseState>())
+        .addRules(UserMentionRule(), CustomMarkdownRules.createBlockQuoteRule())
         .addRules(CustomMarkdownRules.createMarkdownRules(
             this,
             listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
@@ -86,7 +85,7 @@ class MainActivity : AppCompatActivity() {
 
   @Suppress("unused")
   class FooRule<S> : Rule<Any?, Node<Any?>, S>(Pattern.compile("^<Foo>")) {
-    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>, S>, state: S): ParseSpec<Any?, Node<Any?>, S> {
+    override fun parse(matcher: Matcher, parser: Parser<Any?, in Node<Any?>, S>, state: S): ParseSpec<Any?, S> {
       return ParseSpec.createTerminal(TextNode("Bar"), state)
     }
   }
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity() {
   }
 
   class UserMentionRule<S> : Rule<RenderContext, UserNode, S>(Pattern.compile("^<(\\d+)>")) {
-    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode, S>, state: S): ParseSpec<RenderContext, UserNode, S> {
+    override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode, S>, state: S): ParseSpec<RenderContext, S> {
       return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()), state)
     }
   }

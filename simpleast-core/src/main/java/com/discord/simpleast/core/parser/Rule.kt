@@ -33,7 +33,7 @@ abstract class Rule<R, T : Node<R>, S>(val matcher: Matcher) {
     return if (matcher.find()) matcher else null
   }
 
-  abstract fun parse(matcher: Matcher, parser: Parser<R, in T, S>, state: S): ParseSpec<R, T, S>
+  abstract fun parse(matcher: Matcher, parser: Parser<R, in T, S>, state: S): ParseSpec<R, S>
 
   /**
    * A [Rule] that ensures that the [matcher] is only executed if the preceding capture was a newline.

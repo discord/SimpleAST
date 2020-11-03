@@ -14,17 +14,15 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
 
   private val rules = ArrayList<Rule<R, out T, S>>()
 
-  fun <C : T> addRule(rule: Rule<R, C, S>): Parser<R, T, S> {
-    rules.add(rule)
-    return this
-  }
+  @Suppress("unused")
+  fun addRule(rule: Rule<R, out T, S>) =
+      this.apply { rules.add(rule) }
 
-  fun <C: T> addRules(rules: Collection<Rule<R, C, S>>): Parser<R, T, S> {
-    for (rule in rules) {
-      addRule(rule)
-    }
-    return this
-  }
+  fun addRules(vararg newRules: Rule<R, out T, S>) =
+      this.addRules(newRules.asList())
+
+  fun addRules(newRules: Collection<Rule<R, out T, S>>) =
+      this.apply { rules.addAll(newRules) }
 
   /**
    * Transforms the [source] to a AST of [Node]s using the provided [rules].
@@ -35,14 +33,14 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
    * @throws ParseException for certain specific error flows.
    */
   @JvmOverloads
-  fun parse(source: CharSequence?, initialState: S, rules: List<Rule<R, out T, S>> = this.rules): MutableList<T> {
-    val remainingParses = Stack<ParseSpec<R, out T, S>>()
-    val topLevelNodes = ArrayList<T>()
+  fun parse(source: CharSequence, initialState: S, rules: List<Rule<R, out T, S>> = this.rules): MutableList<Node<R>> {
+    val remainingParses = Stack<ParseSpec<R, S>>()
+    val topLevelRootNode = Node<R>()
 
     var lastCapture: String? = null
 
-    if (source != null && !source.isEmpty()) {
-      remainingParses.add(ParseSpec(null, initialState, 0, source.length))
+    if (source.isNotEmpty()) {
+      remainingParses.add(ParseSpec(topLevelRootNode, initialState, 0, source.length))
     }
 
     while (!remainingParses.isEmpty()) {
@@ -52,57 +50,50 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
         break
       }
 
-      val inspectionSource = source?.subSequence(builder.startIndex, builder.endIndex) ?: continue
+      val inspectionSource = source.subSequence(builder.startIndex, builder.endIndex)
       val offset = builder.startIndex
 
-      var foundRule = false
-      for (rule in rules) {
-        val matcher = rule.match(inspectionSource, lastCapture, builder.state)
-        if (matcher != null) {
-          logMatch(rule, inspectionSource)
-          val matcherSourceEnd = matcher.end() + offset
-          foundRule = true
-
-          val newBuilder = rule.parse(matcher, this, builder.state)
-          val parent = builder.root
-
-          newBuilder.root?.let {
-            parent?.addChild(it) ?: topLevelNodes.add(it)
+      val (rule, matcher) = rules
+          .firstMapOrNull { rule ->
+            val matcher = rule.match(inspectionSource, lastCapture, builder.state)
+            if (matcher == null) {
+              logMiss(rule, inspectionSource)
+              null
+            } else {
+              logMatch(rule, inspectionSource)
+              rule to matcher
+            }
           }
+          ?: throw ParseException("failed to find rule to match source", source)
 
-          // In case the last match didn't consume the rest of the source for this subtree,
-          // make sure the rest of the source is consumed.
-          if (matcherSourceEnd != builder.endIndex) {
-            remainingParses.push(ParseSpec.createNonterminal(parent, builder.state, matcherSourceEnd, builder.endIndex))
-          }
+      val matcherSourceEnd = matcher.end() + offset
+      val newBuilder = rule.parse(matcher, this, builder.state)
 
-          // We want to speak in terms of indices within the source string,
-          // but the Rules only see the matchers in the context of the substring
-          // being examined. Adding this offset addresses that issue.
-          if (!newBuilder.isTerminal) {
-            newBuilder.applyOffset(offset)
-            remainingParses.push(newBuilder)
-          }
+      val parent = builder.root
+      parent.addChild(newBuilder.root)
 
-          try {
-            lastCapture = matcher.group(0)
-          } catch (throwable: Throwable) {
-            throw ParseException(message = "matcher found no matches", source = source, cause = throwable)
-          }
-//          println("source: $inspectionSource -- depth: ${remainingParses.size}")
-
-          break
-        } else {
-          logMiss(rule, inspectionSource)
-        }
+      // In case the last match didn't consume the rest of the source for this subtree,
+      // make sure the rest of the source is consumed.
+      if (matcherSourceEnd != builder.endIndex) {
+        remainingParses.push(ParseSpec.createNonterminal(parent, builder.state, matcherSourceEnd, builder.endIndex))
       }
 
-      if (!foundRule) {
-        throw ParseException("failed to find rule to match source", source)
+      // We want to speak in terms of indices within the source string,
+      // but the Rules only see the matchers in the context of the substring
+      // being examined. Adding this offset addresses that issue.
+      if (!newBuilder.isTerminal) {
+        newBuilder.applyOffset(offset)
+        remainingParses.push(newBuilder)
+      }
+
+      try {
+        lastCapture = matcher.group(0)
+      } catch (throwable: Throwable) {
+        throw ParseException(message = "matcher found no matches", source = source, cause = throwable)
       }
     }
 
-    return topLevelNodes
+    return topLevelRootNode.getChildren()?.toMutableList()?: arrayListOf()
   }
 
   private fun <R, T: Node<R>, S> logMatch(rule: Rule<R, T, S>, source: CharSequence) {
@@ -124,4 +115,13 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
 
   class ParseException(message: String, source: CharSequence?, cause: Throwable? = null)
     : RuntimeException("Error while parsing: $message \n Source: $source", cause)
+}
+
+private inline fun <T, V> List<T>.firstMapOrNull(predicate: (T) -> V?): V? {
+  for (element in this) {
+    @Suppress("UnnecessaryVariable")  // wants to inline, but it's unreadable that way
+    val found = predicate(element) ?: continue
+    return found
+  }
+  return null
 }

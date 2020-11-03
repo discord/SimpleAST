@@ -82,7 +82,7 @@ object CustomMarkdownRules {
                     return if (state.isInQuote) { null } else { super.match(inspectionSource, lastCapture, state) }
                 }
 
-                override fun parse(matcher: Matcher, parser: Parser<RC, in BlockQuoteNode<RC>, S>, state: S): ParseSpec<RC, BlockQuoteNode<RC>, S> {
+                override fun parse(matcher: Matcher, parser: Parser<RC, in BlockQuoteNode<RC>, S>, state: S): ParseSpec<RC, S> {
                     val groupIndex = if (matcher.group(1) != null) { 1 } else { 2 }
                     val newState = state.newBlockQuoteState(isInQuote = true)
                     return ParseSpec.createNonterminal(BlockQuoteNode(), newState, matcher.start(groupIndex), matcher.end(groupIndex))

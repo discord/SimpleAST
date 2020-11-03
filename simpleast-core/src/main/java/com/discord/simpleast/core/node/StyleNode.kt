@@ -2,7 +2,7 @@ package com.discord.simpleast.core.node
 
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.text.style.CharacterStyle
+import org.jetbrains.annotations.TestOnly
 
 
 /**
@@ -32,8 +32,9 @@ open class StyleNode<RC, T>(val styles: List<T>) : Node<RC>() {
      * the text content will be.
      */
     @JvmStatic
-    fun <RC> createWithText(content: String, styles: List<CharacterStyle>): StyleNode<RC, CharacterStyle> {
-      val styleNode = StyleNode<RC, CharacterStyle>(styles)
+    @TestOnly
+    fun <RC, T> wrapText(content: String, styles: List<T>): StyleNode<RC, T> {
+      val styleNode = StyleNode<RC, T>(styles)
       styleNode.addChild(TextNode(content))
       return styleNode
     }
