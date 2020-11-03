@@ -6,7 +6,7 @@ android {
     buildToolsVersion '30.0.2'
 
     defaultConfig {
-        applicationId "com.agarron.simpleast"
+        applicationId "com.discord.simpleast"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1

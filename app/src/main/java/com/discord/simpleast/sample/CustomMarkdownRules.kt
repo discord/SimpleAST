@@ -5,7 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.style.*
 import androidx.annotation.StyleRes
-import com.agarron.simpleast.R
+import com.discord.simpleast.R
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.parser.ParseSpec

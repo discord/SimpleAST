@@ -8,7 +8,7 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.agarron.simpleast.R
+import com.discord.simpleast.R
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.TextNode
 import com.discord.simpleast.core.parser.ParseSpec
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
 
   class UserMentionRule<S> : Rule<RenderContext, UserNode, S>(Pattern.compile("^<(\\d+)>")) {
     override fun parse(matcher: Matcher, parser: Parser<RenderContext, in UserNode, S>, state: S): ParseSpec<RenderContext, S> {
-      return ParseSpec.createTerminal(UserNode(matcher.group(1).toInt()), state)
+      return ParseSpec.createTerminal(UserNode(matcher.group(1)!!.toInt()), state)
     }
   }
 }

@@ -15,7 +15,7 @@
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingBottom="48dp"
-        tools:context="com.agarron.simpleast.com.discord.simpleast.sample.MainActivity">
+        tools:context="com.discord.simpleast.sample.MainActivity">
 
         <LinearLayout
             android:layout_width="match_parent"
