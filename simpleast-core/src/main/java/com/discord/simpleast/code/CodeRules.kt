@@ -249,7 +249,7 @@ object CodeRules {
   ): Rule<R, Node<R>, S> {
     return object : Rule<R, Node<R>, S>(PATTERN_CODE_INLINE) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>, S>, state: S)
-          : ParseSpec<R, Node<R>, S> {
+          : ParseSpec<R, S> {
         val codeBody = matcher.group(1).orEmpty()
 
         val content = CodeNode.Content.Raw(codeBody)
