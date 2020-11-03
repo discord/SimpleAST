@@ -9,6 +9,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.discord.simpleast.R
+import androidx.lifecycle.lifecycleScope
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.TextNode
 import com.discord.simpleast.core.parser.ParseSpec
@@ -16,6 +17,9 @@ import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
 import com.discord.simpleast.core.simple.SimpleMarkdownRules
 import com.discord.simpleast.core.simple.SimpleRenderer
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
@@ -35,19 +39,24 @@ class MainActivity : AppCompatActivity() {
     input.setText(SampleTexts.ALL.trimIndent())
 
     findViewById<View>(R.id.benchmark_btn).setOnClickListener {
-      val times = 50.0
-      var totalDuration = 0L
-      var i = 0
-      while (i < times) {
-        val start = System.currentTimeMillis()
-        testParse(50)
-        val end = System.currentTimeMillis()
-        val duration = end - start
-        totalDuration += duration
-        Log.d("timer", "duration of parse: $duration ms")
-        i++
+      val times = 50
+
+      lifecycleScope.launchWhenResumed {
+        withContext(Dispatchers.IO) {
+          var totalDuration = 0L
+
+          (0..times).forEach { _ ->
+            val start = System.currentTimeMillis()
+            testParse(50)
+            val end = System.currentTimeMillis()
+            val duration = end - start
+            totalDuration += duration
+            Log.d("timer", "duration of parse: $duration ms")
+          }
+
+          Log.d("timer", "average parse time: " + totalDuration / times + " ms")
+        }
       }
-      Log.d("timer", "average parse time: " + totalDuration / times + " ms")
     }
 
     findViewById<View>(R.id.test_btn).setOnClickListener {
@@ -60,26 +69,29 @@ class MainActivity : AppCompatActivity() {
     override fun newBlockQuoteState(isInQuote: Boolean): ParseState = ParseState(isInQuote)
   }
 
-  private fun parseInput() {
-    val parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
-        .addRules(UserMentionRule(), CustomMarkdownRules.createBlockQuoteRule())
-        .addRules(CustomMarkdownRules.createMarkdownRules(
-            this,
-            listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
-            listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
-        .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
+  private fun parseInput() = lifecycleScope.launchWhenStarted {
+    val renderedText = withContext(Dispatchers.IO) {
+      val parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
+          .addRules(UserMentionRule(), CustomMarkdownRules.createBlockQuoteRule())
+          .addRules(CustomMarkdownRules.createMarkdownRules(
+              this@MainActivity,
+              listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
+              listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
+          .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
-    resultText.text = SimpleRenderer.render(
-        source = input.text,
-        parser = parser,
-        initialState = ParseState(false),
-        renderContext = RenderContext(mapOf(1234 to "User1234"))
-    )
+      SimpleRenderer.render(
+          source = input.text,
+          parser = parser,
+          initialState = ParseState(false),
+          renderContext = RenderContext(mapOf(1234 to "User1234")))
+    }
+
+    resultText.text = renderedText
   }
 
   private fun testParse(times: Int) {
     for (i in 0 until times) {
-      SimpleRenderer.renderBasicMarkdown(SampleTexts.BENCHMARK_TEXT, resultText)
+      SimpleRenderer.renderBasicMarkdown(SampleTexts.ALL)
     }
   }
 

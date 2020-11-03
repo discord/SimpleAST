@@ -25,8 +25,10 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation project(':simpleast-core')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines"
 
     implementation "androidx.appcompat:appcompat:$appCompat_version"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.2.0'
 
     testImplementation "junit:junit:$junit_version"
 }
