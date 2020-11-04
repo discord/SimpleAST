@@ -27,10 +27,23 @@ class MainActivity : AppCompatActivity() {
   private lateinit var resultText: TextView
   private lateinit var input: EditText
 
+  private lateinit var parser: Parser<RenderContext, Node<RenderContext>, ParseState>
+
   @SuppressLint("SetTextI18n")
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
+
+    parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
+        .addRules(UserMentionRule(), CustomMarkdownRules.createBlockQuoteRule())
+        .addRules(CustomMarkdownRules.createMarkdownRules(
+            this@MainActivity,
+            listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
+            listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
+        .addRules(
+            CustomMarkdownRules.createCodeRule(this@MainActivity),
+            CustomMarkdownRules.createCodeInlineRule(this@MainActivity))
+        .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
 
     resultText = findViewById(R.id.result_text)
     input = findViewById(R.id.input)
@@ -70,17 +83,6 @@ class MainActivity : AppCompatActivity() {
 
   private fun parseInput() = lifecycleScope.launchWhenStarted {
     val renderedText = withContext(Dispatchers.IO) {
-      val parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
-          .addRules(UserMentionRule(), CustomMarkdownRules.createBlockQuoteRule())
-          .addRules(CustomMarkdownRules.createMarkdownRules(
-              this@MainActivity,
-              listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
-              listOf(R.style.Demo_Header_1_Add, R.style.Demo_Header_1_Remove, R.style.Demo_Header_1_Fix)))
-          .addRules(
-              CustomMarkdownRules.createCodeRule(this@MainActivity),
-              CustomMarkdownRules.createCodeInlineRule(this@MainActivity))
-          .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
-
       SimpleRenderer.render(
           source = input.text,
           parser = parser,
@@ -93,7 +95,11 @@ class MainActivity : AppCompatActivity() {
 
   private fun testParse(times: Int) {
     for (i in 0 until times) {
-      SimpleRenderer.renderBasicMarkdown(SampleTexts.ALL)
+      SimpleRenderer.render(
+          source = SampleTexts.BENCHMARK_TEXT.trimIndent(),
+          parser = parser,
+          initialState = ParseState(false),
+          renderContext = RenderContext(mapOf(1234 to "User1234")))
     }
   }
 
