@@ -1,4 +1,8 @@
 <resources>
+    <!-- Code Language Colors -->
+    <attr name="simpleAST_codeTextAppearance" format="reference" />
+    <attr name="simpleAST_codeCommentAppearance" format="reference" />
+    <attr name="simpleAST_codeKeywordAppearance" format="reference" />
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">

@@ -6,7 +6,7 @@ object SampleTexts {
   const val TEXT = """
     Some really long **introduction** text that goes on **__forever__** explaining __something__.
   
-    single newline above
+    single `newline` above. `test` sentence
   """
 
   const val HEADERS = """
@@ -46,6 +46,164 @@ object SampleTexts {
     Still quoted
   """
 
+  private const val CODE_BLOCK_KOTLIN = """
+    Kotlin code block:
+    ```kt
+    object CodeRules {
+      /**
+       * Handles markdown syntax for code blocks for a given language.
+       */
+      val PATTERN_CODE_BLOCK = XXXX
+    
+      private val CODE_BLOCK_LANGUAGE_GROUP = 2
+    
+      @Annotation(test=true)
+      interface CodeLanguageState<Self : CodeLanguageState<Self>> {
+        var codeLangauge: String?  // Inline
+        var isCommentBlock: Boolean
+      }
+      
+      fun <T> foo(t: T): List<Int> {
+        when (t) {
+          is null -> throw Exception("oops!")
+          else -> return listOf(1, 2, 3).let { it }
+        }
+      }
+    }
+    ```
+  """
+
+  private const val CODE_BLOCK_PROTO_BUFFERS = """
+    ProtoBuffers code block:
+    ```pb
+    package com.discord.test
+    
+    import "google/protobuf/descriptor.proto";
+
+    extend google.protobuf.MessageOptions {
+      optional int32 my_message_option = 50001;
+    }
+    
+    message MyMessage {
+      option (my_message_option) = 1234;
+    
+      optional string bar = 1 [default = "Test"];
+      oneof qux {
+        option (my_oneof_option) = 42;
+    
+        required string quux = 3;
+      }
+      repeated in64 ids = 4;
+    }
+    
+    enum MyEnum {
+      option (my_enum_option) = true;
+    
+      FOO = 1 [(my_enum_value_option) = 321];
+      BAR = 2;
+    }
+    
+    message RequestType {}
+    message ResponseType {}
+    
+    service MyService {
+      option (my_service_option) = FOO;
+    
+      rpc MyMethod(RequestType) returns(ResponseType) {
+        // Note:  my_method_option has type MyMessage.  We can set each field
+        //   within it using a separate "option" line.
+        option (my_method_option).bar = "Some string";
+      }
+    }
+    ```
+  """
+
+  private const val CODE_BLOCK_PYTHON = """
+    Python code block:
+    ```py
+    from com.discord import test
+    
+    # This is a python comment!
+    class CodeRules:
+      @Annotation(test=True)
+      def test(x=0, y=False):
+        while (True):
+          if (x is bool):
+            continue
+          else:
+            raise 'oops!' + "I did it again"
+      try:
+        test(456, False)
+      except:
+        lambda lookup: 1 in lookup
+      finally:
+         pass
+    ```
+  """
+
+  private const val CODE_BLOCK_RUST = """
+    Rust code block:
+    ```rs
+    mod test {
+      use std::sync::Arc
+      use crate::{UserId}
+      
+      #[derive(Clone)]
+      pub struct Event {name: A, value: B}
+      
+      impl<T: Clone, V> Event<T, V>
+      where
+        V: Clone + Send + Sync
+      {
+        async fn count(&self, req: T) -> Result<Option<String>, String>{
+          let name = "test";
+          let limit = match req.limit {
+            0 => usize::max_value(),
+            _ => req.limit,
+          }
+          let count = self.count(limit).await?;
+          Ok(Some(count))
+        }
+      }
+    }
+    ```
+  """
+
+
+  private const val CODE_BLOCK_XML = """
+    XML code block:
+    ```xml
+      <!--
+          Multi-line
+          Commnent
+      -->
+      <resources xmlns:tools="http://schemas.android.com/tools">
+        
+        <attr name="primary_100" format="reference|color" />
+        
+        <!--<editor-fold desc="Android material styles">-->
+        <item name="colorPrimary">@color/black</item>
+      </resources>
+    ```
+  """
+
+  const val CODE_BLOCKS = """
+    # Code block samples
+    inlined:```kt private fun test() {}```
+    inlined:```kt private fun test() {
+      some.call()
+    }```
+    
+    $CODE_BLOCK_KOTLIN
+    $CODE_BLOCK_PROTO_BUFFERS
+    $CODE_BLOCK_PYTHON
+    $CODE_BLOCK_RUST
+    $CODE_BLOCK_XML
+    
+    That should do it....
+  """
+
+
   const val BENCHMARK_TEXT = """
     Test __Inner **nested** rules__ as well as *look ahead* rules
     ==========
@@ -77,9 +235,8 @@ object SampleTexts {
 
   const val ALL = """
     $TEXT
-    
     $HEADERS
-    
+    $CODE_BLOCKS
     $QUOTES
   """
 }

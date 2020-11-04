@@ -6,12 +6,15 @@ import android.graphics.Typeface
 import android.text.style.*
 import androidx.annotation.StyleRes
 import com.discord.simpleast.R
+import com.discord.simpleast.code.CodeRules
+import com.discord.simpleast.code.CodeStyleProviders
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
 import com.discord.simpleast.core.parser.ParseSpec
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.parser.Rule
 import com.discord.simpleast.markdown.MarkdownRules
+import com.discord.simpleast.sample.spans.BlockBackgroundNode
 import com.discord.simpleast.sample.spans.VerticalMarginSpan
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -72,7 +75,8 @@ object CustomMarkdownRules {
      */
     private val PATTERN_BLOCK_QUOTE = Pattern.compile("^(?: *>>> ?(.+)| *>(?!>>) ?([^\\n]+\\n?))", Pattern.DOTALL)
 
-    class BlockQuoteNode<RC> : StyleNode<RC, BackgroundColorSpan>(listOf(BackgroundColorSpan(Color.GRAY)))
+    class BlockQuoteNode<RC> : StyleNode<RC, Any>(listOf(
+        LeadingMarginSpan.Standard(40), BackgroundColorSpan(Color.GRAY)))
 
     // Use a block rule to ensure we only match at the beginning of a line.
     fun <RC, S: BlockQuoteState<S>> createBlockQuoteRule(): Rule.BlockRule<RC, BlockQuoteNode<RC>, S> =
@@ -88,4 +92,38 @@ object CustomMarkdownRules {
                     return ParseSpec.createNonterminal(BlockQuoteNode(), newState, matcher.start(groupIndex), matcher.end(groupIndex))
                 }
             }
+
+
+  fun <RC, S: BlockQuoteState<S>> createCodeRule(context: Context): Rule<RC, Node<RC>, S> {
+    val codeStyleProviders = CodeStyleProviders<RC>(
+        defaultStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance)) },
+        commentStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Comment)) },
+        literalStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Literal)) },
+        keywordStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Keyword)) },
+        identifierStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Identifier)) },
+        typesStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Types)) },
+        genericsStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Generics)) },
+        paramsStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Params)) },
+    )
+    val languageMap = CodeRules.createCodeLanguageMap<RC, S>(codeStyleProviders)
+
+    return CodeRules.createCodeRule(
+        codeStyleProviders.defaultStyleProvider,
+        languageMap
+    ) { codeNode, block, state ->
+      if (!block) {
+        StyleNode<RC, Any>(listOf(BackgroundColorSpan(Color.DKGRAY)))
+            .apply { addChild(codeNode) }
+      } else {
+        BlockBackgroundNode(state.isInQuote, codeNode)
+      }
+    }
+  }
+
+  fun <RC, S : BlockQuoteState<S>> createCodeInlineRule(context: Context): Rule<RC, Node<RC>, S> {
+    return CodeRules.createInlineCodeRule(
+        { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance)) },
+        { listOf(BackgroundColorSpan(Color.DKGRAY)) },
+    )
+  }
 }

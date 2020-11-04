@@ -1,0 +1,38 @@
+<resources>
+    <!-- Code Language Colors -->
+    <style name="Code.TextAppearance" parent="">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:typeface">monospace</item>
+    </style>
+
+    <style name="Code.TextAppearance.Comment" parent="">
+        <item name="android:textColor">#7A7A7A</item>
+    </style>
+
+    <style name="Code.TextAppearance.Literal" parent="">
+        <item name="android:textColor">#009688</item>
+    </style>
+
+    <style name="Code.TextAppearance.Keyword" parent="">
+        <item name="android:textColor">#E06C75</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="Code.TextAppearance.Identifier" parent="">
+        <item name="android:textColor">#F3CB51</item>
+    </style>
+
+    <style name="Code.TextAppearance.Types" parent="">
+        <item name="android:textColor">#AED581</item>
+    </style>
+
+    <style name="Code.TextAppearance.Generics" parent="">
+        <item name="android:textColor">#63AFEF</item>
+    </style>
+
+    <style name="Code.TextAppearance.Params" parent="">
+        <item name="android:textColor">#C3AEEA</item>
+    </style>
+
+</resources>
