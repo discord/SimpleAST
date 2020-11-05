@@ -34,7 +34,11 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
    * @throws ParseException for certain specific error flows.
    */
   @JvmOverloads
-  fun parse(source: CharSequence, initialState: S, rules: List<Rule<R, out T, S>> = this.rules): MutableList<Node<R>> {
+  fun parse(
+      source: CharSequence,
+      initialState: S,
+      rules: List<Rule<R, out T, S>> = this.rules
+  ): MutableList<T> {
     val remainingParses = Stack<ParseSpec<R, S>>()
     val topLevelRootNode = Node<R>()
 
@@ -94,7 +98,9 @@ open class Parser<R, T : Node<R>, S> @JvmOverloads constructor(private val enabl
       }
     }
 
-    return topLevelRootNode.getChildren()?.toMutableList()?: arrayListOf()
+    @Suppress("UNCHECKED_CAST")  // Guaranteed by the rule's generic T
+    val ast = topLevelRootNode.getChildren()?.toMutableList() as? MutableList<T>
+    return ast ?: arrayListOf()
   }
 
   private fun <R, T: Node<R>, S> logMatch(rule: Rule<R, T, S>, source: CharSequence) {

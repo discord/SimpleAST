@@ -15,12 +15,11 @@ import com.discord.simpleast.core.node.Node
  * take place on the text.
  *
  * @param R The type of render context needed by the node that this contains.
- * @param T The type of node that this contains.
  * @param S The type of state that child nodes will use. This is mainly used to just pass through
  *          the state back to the parser.
  */
 class ParseSpec<R, S> {
-  val root:  Node<R>
+  val root: Node<R>
   val isTerminal: Boolean
   val state: S
   var startIndex: Int = 0

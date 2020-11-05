@@ -93,7 +93,6 @@ object CustomMarkdownRules {
                 }
             }
 
-
   fun <RC, S: BlockQuoteState<S>> createCodeRule(context: Context): Rule<RC, Node<RC>, S> {
     val codeStyleProviders = CodeStyleProviders<RC>(
         defaultStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance)) },
