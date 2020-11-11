@@ -189,8 +189,9 @@ object SampleTexts {
 
   const val CODE_BLOCKS = """
     # Code block samples
-    inlined:```kt private fun test() {}```
-    inlined:```kt private fun test() {
+    inlined:```py language code blocks need newline```
+    inlined:```kt 
+    private fun test() {
       some.call()
     }```
     

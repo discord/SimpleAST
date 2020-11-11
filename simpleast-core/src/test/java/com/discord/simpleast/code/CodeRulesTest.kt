@@ -31,6 +31,19 @@ class CodeRulesTest {
   }
 
   @Test
+  fun noLanguageOneLined() {
+    val ast = parser.parse("""
+      ```code```
+      
+      ```spaces  ```
+      
+      ```some text```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<CodeNode<*>>("code", "spaces  ", "some text")
+  }
+
+  @Test
   fun commentsRust() {
     val ast = parser.parse("""
       ```rs
