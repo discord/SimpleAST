@@ -44,6 +44,17 @@ class CodeRulesTest {
   }
 
   @Test
+  fun noLanguageBlocked() {
+    val ast = parser.parse("""
+      Sample: ```
+      **block text**
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<CodeNode<*>>("**block text**")
+  }
+
+  @Test
   fun commentsRust() {
     val ast = parser.parse("""
       ```rs

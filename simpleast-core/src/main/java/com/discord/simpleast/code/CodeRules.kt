@@ -25,7 +25,7 @@ object CodeRules {
    * Examples:
    * inlined ```test```
    * inlined ```kt language code blocks need newline```
-   * inlined block start ```kt
+   * inlined block start ```
    * fun test()
    * ```
    *
@@ -38,7 +38,7 @@ object CodeRules {
    * ```
    */
   val PATTERN_CODE_BLOCK: Pattern =
-      Pattern.compile("""^```(?:([\w+\-.]+?)(\s*\n))?([^\n].*?)\n*```""", Pattern.DOTALL)
+      Pattern.compile("""^```(?:([\w+\-.]+?)?(\s*\n))?([^\n].*?)\n*```""", Pattern.DOTALL)
 
   val PATTERN_CODE_INLINE: Pattern =
       Pattern.compile("""^`(?:\s*)([^\n].*?)\n*`""", Pattern.DOTALL)
