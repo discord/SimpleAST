@@ -23,8 +23,9 @@ object CodeRules {
    * Handles markdown syntax for code blocks for a given language.
    *
    * Examples:
-   * inlined ```kt fun test()```
-   * inlined2 ```kt
+   * inlined ```test```
+   * inlined ```kt language code blocks need newline```
+   * inlined block start ```kt
    * fun test()
    * ```
    *
@@ -37,7 +38,7 @@ object CodeRules {
    * ```
    */
   val PATTERN_CODE_BLOCK: Pattern =
-      Pattern.compile("""^```(?:([A-z0-9_+\-.]+))?(\s*)([^\n].*?)\n*```""", Pattern.DOTALL)
+      Pattern.compile("""^```(?:([\w+\-.]+?)(\s*\n))?([^\n].*?)\n*```""", Pattern.DOTALL)
 
   val PATTERN_CODE_INLINE: Pattern =
       Pattern.compile("""^`(?:\s*)([^\n].*?)\n*`""", Pattern.DOTALL)
@@ -226,7 +227,7 @@ object CodeRules {
           : ParseSpec<R, S> {
         val language = matcher.group(CODE_BLOCK_LANGUAGE_GROUP)
         val codeBody = matcher.group(CODE_BLOCK_BODY_GROUP).orEmpty()
-        val startsWithNewline = matcher.group(CODE_BLOCK_WS_PREFIX)!!.contains('\n')
+        val startsWithNewline = matcher.group(CODE_BLOCK_WS_PREFIX)?.contains('\n') ?: false
 
         val languageRules = language?.let { languageMap[it] }
 
