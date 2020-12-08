@@ -1,8 +1,11 @@
 package com.discord.simpleast.code
 
+import android.graphics.Color
+import android.text.style.BackgroundColorSpan
 import com.discord.simpleast.assertNodeContents
 import com.discord.simpleast.core.node.Node
 import com.discord.simpleast.core.node.StyleNode
+import com.discord.simpleast.core.node.TextNode
 import com.discord.simpleast.core.parser.Parser
 import com.discord.simpleast.core.simple.SimpleMarkdownRules
 import com.discord.simpleast.core.utils.TreeMatcher
@@ -21,13 +24,49 @@ class CodeRulesTest {
   fun setup() {
     parser = Parser()
     val codeStyleProviders = CodeStyleProviders<TestRenderContext>()
-    parser.addRule(CodeRules.createCodeRule(
-        codeStyleProviders.defaultStyleProvider,
-        CodeRules.createCodeLanguageMap(codeStyleProviders))
-    )
-    parser.addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
+    parser
+        // Duplicated in `getBasicRules` but required to occur before block + quotes
+        .addRule(SimpleMarkdownRules.createEscapeRule())
+        .addRule(CodeRules.createCodeRule(
+            codeStyleProviders.defaultStyleProvider,
+            CodeRules.createCodeLanguageMap(codeStyleProviders))
+        )
+        .addRule(CodeRules.createInlineCodeRule(
+            { listOf(BackgroundColorSpan(Color.WHITE)) },
+            { listOf(BackgroundColorSpan(Color.DKGRAY)) })
+        )
+        .addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeEscapeRule = false))
     treeMatcher = TreeMatcher()
     treeMatcher.registerDefaultMatchers()
+  }
+
+  @Test
+  fun inlined() {
+    val ast = parser.parse("""
+      `inlined`
+      `inline extra``
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<CodeNode<*>>("inlined", "inline extra")
+    ast.assertNodeContents<TextNode<*>>("inlined", "\n", "inline extra", "`")
+  }
+
+  @Test
+  fun inlineNoContent() {
+    val ast = parser.parse("""
+      ``
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<TextNode<*>>("``")
+  }
+
+  @Test
+  fun inlineEscapedBlock() {
+    val ast = parser.parse("""
+      \```test```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<TextNode<*>>("`", "``", "test", "``", "`")
   }
 
   @Test

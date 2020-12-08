@@ -35,7 +35,11 @@ class MainActivity : AppCompatActivity() {
     setContentView(R.layout.activity_main)
 
     parser = Parser<RenderContext, Node<RenderContext>, ParseState>()
-        .addRules(UserMentionRule(), CustomMarkdownRules.createBlockQuoteRule())
+        .addRules(
+            // Allow callers to escape markdown commands such as code block ticks
+            SimpleMarkdownRules.createEscapeRule(),
+            UserMentionRule(),
+            CustomMarkdownRules.createBlockQuoteRule())
         .addRules(CustomMarkdownRules.createMarkdownRules(
             this@MainActivity,
             listOf(R.style.Demo_Header_1, R.style.Demo_Header_2, R.style.Demo_Header_3),
@@ -43,7 +47,7 @@ class MainActivity : AppCompatActivity() {
         .addRules(
             CustomMarkdownRules.createCodeRule(this@MainActivity),
             CustomMarkdownRules.createCodeInlineRule(this@MainActivity))
-        .addRules(SimpleMarkdownRules.createSimpleMarkdownRules())
+        .addRules(SimpleMarkdownRules.createSimpleMarkdownRules(includeEscapeRule = false))
 
     resultText = findViewById(R.id.result_text)
     input = findViewById(R.id.input)
