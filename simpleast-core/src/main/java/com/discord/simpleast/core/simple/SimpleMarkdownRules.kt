@@ -69,7 +69,7 @@ object SimpleMarkdownRules {
   fun <R, S> createEscapeRule(): Rule<R, Node<R>, S> {
     return object : Rule<R, Node<R>, S>(PATTERN_ESCAPE) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>, S>, state: S): ParseSpec<R,  S> {
-        return ParseSpec.createTerminal(TextNode(matcher.group(1)), state)
+        return ParseSpec.createTerminal(TextNode(matcher.group(1)!!), state)
       }
     }
   }
@@ -80,7 +80,7 @@ object SimpleMarkdownRules {
         val startIndex: Int
         val endIndex: Int
         val asteriskMatch = matcher.group(2)
-        if (asteriskMatch != null && asteriskMatch.length > 0) {
+        if (asteriskMatch != null && asteriskMatch.isNotEmpty()) {
           startIndex = matcher.start(2)
           endIndex = matcher.end(2)
         } else {
@@ -98,9 +98,11 @@ object SimpleMarkdownRules {
   }
 
   @JvmOverloads @JvmStatic
-  fun <R, S> createSimpleMarkdownRules(includeTextRule: Boolean = true): MutableList<Rule<R, Node<R>, S>> {
+  fun <R, S> createSimpleMarkdownRules(includeTextRule: Boolean = true, includeEscapeRule:Boolean = true): MutableList<Rule<R, Node<R>, S>> {
     val rules = ArrayList<Rule<R, Node<R>, S>>()
-    rules.add(createEscapeRule())
+    if (includeEscapeRule) {
+      rules.add(createEscapeRule())
+    }
     rules.add(createNewlineRule())
     rules.add(createBoldRule())
     rules.add(createUnderlineRule())
