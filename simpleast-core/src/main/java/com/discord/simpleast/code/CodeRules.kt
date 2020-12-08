@@ -172,6 +172,23 @@ object CodeRules {
         PATTERN_TEXT.toMatchGroupRule(),
     )
 
+    val queryLangauge = listOf<Rule<R, Node<R>, S>>(
+        createSingleLineCommentPattern("#")
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
+        Pattern.compile("""^"[\s\S]*?(?<!\\)"(?=\W|\s|$)""")
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
+        createWordPattern("true|false|null").pattern().toPattern(Pattern.CASE_INSENSITIVE)
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
+        createWordPattern(
+            "select|from|join|where|and|as|distinct|count|avg",
+            "order by|group by|desc|sum|min|max",
+            "like|having|in|is|not").pattern().toPattern(Pattern.CASE_INSENSITIVE)
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.keywordStyleProvider),
+        PATTERN_NUMBERS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
+        PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
+        PATTERN_TEXT.toMatchGroupRule(),
+    )
+
     return mapOf(
         "kt" to kotlinRules,
         "kotlin" to kotlinRules,
@@ -185,6 +202,9 @@ object CodeRules {
 
         "rs" to rustRules,
         "rust" to rustRules,
+
+        "cql" to queryLangauge,
+        "sql" to queryLangauge,
 
         "xml" to xmlRules,
         "http" to xmlRules,

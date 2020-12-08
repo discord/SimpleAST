@@ -169,21 +169,31 @@ object SampleTexts {
     ```
   """
 
+  private const val CODE_BLOCK_SQL = """
+    ```sql
+    SELECT name
+    from Users as u
+    WHERE u.id > 0
+      and u.name is NOT NULL
+    Order by
+      u.name
+    ```
+  """
 
   private const val CODE_BLOCK_XML = """
     XML code block:
     ```xml
-      <!--
-          Multi-line
-          Commnent
-      -->
-      <resources xmlns:tools="http://schemas.android.com/tools">
-        
-        <attr name="primary_100" format="reference|color" />
-        
-        <!--<editor-fold desc="Android material styles">-->
-        <item name="colorPrimary">@color/black</item>
-      </resources>
+    <!--
+        Multi-line
+        Commnent
+    -->
+    <resources xmlns:tools="http://schemas.android.com/tools">
+      
+      <attr name="primary_100" format="reference|color" />
+      
+      <!--<editor-fold desc="Android material styles">-->
+      <item name="colorPrimary">@color/black</item>
+    </resources>
     ```
   """
 
@@ -199,6 +209,7 @@ object SampleTexts {
     $CODE_BLOCK_PROTO_BUFFERS
     $CODE_BLOCK_PYTHON
     $CODE_BLOCK_RUST
+    $CODE_BLOCK_SQL
     $CODE_BLOCK_XML
     
     That should do it....

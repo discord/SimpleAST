@@ -87,6 +87,20 @@ class CodeRulesTest {
   }
 
   @Test
+  fun commentsSql() {
+    val ast = parser.parse("""
+      ```sql
+      Test # Inlined
+      # Line comment
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        "# Inlined",
+        "# Line comment")
+  }
+
+  @Test
   fun stringsRust() {
     val ast = parser.parse("""
       ```rs
@@ -120,6 +134,18 @@ class CodeRulesTest {
         """"lyte"""",
         """"hello
         |    world"""".trimMargin(),)
+  }
+
+  @Test
+  fun stringsSql() {
+    val ast = parser.parse("""
+      ```sql
+      name = "lyte";
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        """"lyte"""")
   }
 
   /**
@@ -242,5 +268,26 @@ class CodeRulesTest {
         "pass",
         "finally",
         "return")
+  }
+
+  @Test
+  fun keywordsSql() {
+    val ast = parser.parse("""
+      ```sql
+      SELECT name
+      from Users as u
+      WHERE u.id > 0
+        and u.name is NOT NULL
+      Order By
+        u.name
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        "SELECT",
+        "from", "as",
+        "WHERE", "0",
+        "and", "is", "NOT", "NULL",
+        "Order By")
   }
 }
