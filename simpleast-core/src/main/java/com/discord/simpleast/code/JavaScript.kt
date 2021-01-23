@@ -26,7 +26,7 @@ object JavaScript {
 
 
   val BUILT_INS: Array<String> = arrayOf(
-    "String|Boolean|RegExp|Number|Date",
+    "String|Boolean|RegExp|Number|Date|Math",
     "Function|Promise",
     "Array|Object|Map|Set|Uint8Array|Uint16Array|Uint32Array|Uint8ClampedArray|Buffer",
     "console",
