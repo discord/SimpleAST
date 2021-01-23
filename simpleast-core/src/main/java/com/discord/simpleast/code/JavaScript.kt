@@ -26,15 +26,15 @@ object JavaScript {
 
 
   val BUILT_INS: Array<String> = arrayOf(
-    "String|Boolean|RegExp|Number|Date|Math",
+    "String|Boolean|RegExp|Number|Date|Math|JSON|Symbol",
     "Function|Promise",
     "Array|Object|Map|Set|Uint8Array|Uint16Array|Uint32Array|Uint8ClampedArray|Buffer",
-    "console",
+    "console|process|require|isNaN|parseInt|parseFloat|encodeURI|decodeURI|encodeURIComponent|decodeURIComponent",
     "Error|SyntaxError|TypeError|RangeError|ReferenceError|EvalError|AggregateError"
   )
 
   class FunctionNode<RC>(
-    pre: String, signature: String?, params: String,
+    pre: String?, signature: String?, params: String,
     codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
       StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
@@ -51,7 +51,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function) *?(\w+)?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCH_ALL).toPattern()
+             """^(function|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{[\s\S]*?\}""".toRegex(RegexOption.DOT_MATCH_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
@@ -59,7 +59,7 @@ object JavaScript {
               val definition = matcher.group(1)
               val signature = matcher.group(2)
               val params = matcher.group(3)
-              return ParseSpec.createTerminal(FunctionNode(definition!!, signature, params!!, codeStyleProviders), state)
+              return ParseSpec.createTerminal(FunctionNode(definition, signature, params!!, codeStyleProviders), state)
             }
           }
     }
@@ -83,7 +83,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_FIELD =
-          Pattern.compile("""^(var|let|const)(\s+\w+)""", Pattern.DOTALL)
+          Pattern.compile("""^(var|let|const)\s+(?:\{\s*?(.*)\s*?\}|(\w+))""", Pattern.DOTALL)
 
       fun <RC, S> createFieldRule(
           codeStyleProviders: CodeStyleProviders<RC>
@@ -92,7 +92,8 @@ object JavaScript {
             override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S):
                 ParseSpec<RC, S> {
               val definition = matcher.group(1)
-              val name = matcher.group(2)
+              val name = matcher.group(3)
+              if (!name) name = matcher.group(2)
               return ParseSpec.createTerminal(
                   FieldNode(definition!!, name!!, codeStyleProviders), state)
             }
