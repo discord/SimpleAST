@@ -37,7 +37,7 @@ object JavaScript {
     pre: String?, signature: String?, params: String,
     codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
-      StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
+      pre?.let { StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider) },
       signature?.let { StyleNode.TextStyledNode(signature, codeStyleProviders.identifierStyleProvider) },
       StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider)
   ) : {
@@ -51,7 +51,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{[\s\S]*?\}""".toRegex(RegexOption.DOT_MATCH_ALL).toPattern()
+             """^(function\*?|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{[\s\S]*?\}""".toRegex(RegexOption.DOT_MATCH_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
