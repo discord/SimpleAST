@@ -18,7 +18,7 @@ object JavaScript {
      "function|super|this|extends|implements|arguments",
      "var|let|const|static|get|set|new",
      "return|break|continue|yield|void",
-     "if|else|for|while|do|switch|async|await|case|try|catch|finally|delete|throw",
+     "if|else|for|while|do|switch|async|await|case|try|catch|finally|delete|throw|NaN|Infinity",
      "of|in|instanceof|typeof",
      "debugger|with",
      "true|false|null|undefined"
