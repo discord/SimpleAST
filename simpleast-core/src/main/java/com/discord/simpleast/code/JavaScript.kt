@@ -109,7 +109,7 @@ object JavaScript {
    * ```
    */
    private val PATTERN_JAVASCRIPT_REGEX = 
-       Pattern.compile("""^/.*?/\w+?""", Pattern.DOTALL)
+       Pattern.compile("""^/.*?/(?:\w*)?""", Pattern.DOTALL)
 
   /**
    * Matches against a JavaScript generic.
