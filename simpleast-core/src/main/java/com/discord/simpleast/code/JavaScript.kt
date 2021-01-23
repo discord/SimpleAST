@@ -51,7 +51,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function) *(\w+)?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCH_ALL).toPattern()
+             """^(function) *?(\w+)?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCH_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
