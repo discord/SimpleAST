@@ -189,6 +189,13 @@ object CodeRules {
         PATTERN_TEXT.toMatchGroupRule(),
     )
 
+    val javascriptRules = createGenericCodeRules<R, S>(
+        codeStyleProviders,
+        additionalRules = JavaScript.createJavaScriptCodeRules(codeStyleProviders),
+        definitions = arrayOf("class", "interface"),
+        builtIns = JavaScript.BUILT_INS,
+        keywords = JavaScript.KEYWORDS)
+
     return mapOf(
         "kt" to kotlinRules,
         "kotlin" to kotlinRules,
@@ -208,6 +215,9 @@ object CodeRules {
 
         "xml" to xmlRules,
         "http" to xmlRules,
+
+        "js" to javascriptRules,
+        "javascript", to javascriptRules
     )
   }
 
