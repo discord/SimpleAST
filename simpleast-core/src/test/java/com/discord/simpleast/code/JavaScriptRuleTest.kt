@@ -195,3 +195,26 @@ class JavaScriptRulesTest {
     ast.assertNodeContents<CodeNode.DefinitionNode<*>>(
         "class Bug")
   }
+
+  @Test
+  fun regex() {
+    val ast = parser.parse("""
+      ```js
+      /(.*)/g
+      /[\$\{\}]/
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>("""/(.*)/g""", """/[\$\{\}]/""")
+  }
+
+  @Test
+  fun generics() {
+    val ast = parser.parse("""
+      ```js
+      <pending>
+      ```
+    """.trimIndent(), TestState())
+
+   ast.assertNodeContents<StyleNode.TextStyledNode<*>>("""<pending>""")
+  }
