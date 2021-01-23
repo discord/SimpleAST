@@ -101,6 +101,26 @@ object JavaScript {
   }
 
   /**
+   * Matches against a JavaScript regex.
+   *
+   * ```
+   * /(.*)/
+   * ```
+   */
+   private val PATTERN_JAVASCRIPT_REGEX = 
+       Pattern.compile("""^/.*?/\w+?""", Pattern.DOTALL)
+
+  /**
+   * Matches against a JavaScript generic.
+   *
+   * ```
+   * <pending>
+   * ```
+   */
+  private val PATTERN_JAVASCRIPT_GENERIC = 
+      Pattern.compile("""^<(.*)>""", Pattern.DOTALL)
+
+  /**
    * Matches against a JavaScript comment.
    *
    * ```
@@ -140,6 +160,8 @@ object JavaScript {
           PATTERN_JAVASCRIPT_COMMENTS.toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
           PATTERN_JAVASCRIPT_STRINGS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
           PATTERN_JAVASCRIPT_OBJECT_PROPERTY.toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
+          PATTERN_JAVASCRIPT_GENERIC.toMatchGroupRule(stylesProvider = codeStyleProviders.genericStyleProvider),
+          PATTERN_JAVASCRIPT_REGEX.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
           FieldNode.createFieldRule(codeStyleProviders),
           FunctionNode.createFunctionRule(codeStyleProviders),
       )
