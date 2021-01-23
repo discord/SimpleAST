@@ -217,7 +217,7 @@ object CodeRules {
         "http" to xmlRules,
 
         "js" to javascriptRules,
-        "javascript", to javascriptRules
+        "javascript" to javascriptRules,
     )
   }
 
