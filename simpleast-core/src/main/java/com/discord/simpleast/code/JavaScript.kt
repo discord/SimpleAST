@@ -119,7 +119,7 @@ object JavaScript {
    * ```
    */
   private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
-      Pattern.compile("""^[\{\[]\s*?(.*):.*[\}\]]""", Pattern.DOTALL)
+      Pattern.compile("""^[\{\[\,]\s*?(.*):""", Pattern.DOTALL)
 
   /**
    * Matches against a JavaScript string.
