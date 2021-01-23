@@ -101,7 +101,11 @@ class JavaScriptRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<JavaScript.FunctionNode<*>>("function test(T)", "function()")
+    ast.assertNodeContents<JavaScript.FunctionNode<*>>(
+      """function test(T) {
+           // Implementation
+         }""".trimIndent(),
+      "function() {}")
   }
 
   @Test
