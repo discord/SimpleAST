@@ -161,7 +161,7 @@ object JavaScript {
           PATTERN_JAVASCRIPT_COMMENTS.toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
           PATTERN_JAVASCRIPT_STRINGS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
           PATTERN_JAVASCRIPT_OBJECT_PROPERTY.toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
-          PATTERN_JAVASCRIPT_GENERIC.toMatchGroupRule(stylesProvider = codeStyleProviders.genericStyleProvider),
+          PATTERN_JAVASCRIPT_GENERIC.toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
           PATTERN_JAVASCRIPT_REGEX.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
           FieldNode.createFieldRule(codeStyleProviders),
           FunctionNode.createFunctionRule(codeStyleProviders),
