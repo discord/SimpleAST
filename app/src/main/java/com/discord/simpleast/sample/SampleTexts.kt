@@ -203,14 +203,14 @@ object SampleTexts {
     const { performance } = require('perf_hooks');
     function getMem() {
       return Object.entries(process.memoryUsage())
-               .map(([K, V]) => `\${K}: \${(V / (2 ** 1024)).toFixed(1)}MB`)
+               .map(([K, V]) => `${'$'}{K}: ${'$'}{(V / (2 ** 1024)).toFixed(1)}MB`)
                .join('\n');
     }
     let timer = performance.now();
     for (let i = 0; i < 50; i++) getMem();
     timer = performance.now() - timer;
 
-    console.log(`Took \${timer} ms`);
+    console.log(`Took ${'$'}{timer} ms`);
     ```
   """
 
