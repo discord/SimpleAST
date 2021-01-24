@@ -40,7 +40,7 @@ object JavaScript {
       pre?.let { StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider) },
       signature?.let { StyleNode.TextStyledNode(signature, codeStyleProviders.identifierStyleProvider) },
       StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider)
-  ) : {
+  ) {
       companion object {
         /**
          * Matches against a JavaScript function declaration.
@@ -51,7 +51,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function\*?|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{[\s\S]*?\}""".toRegex(RegexOption.DOT_MATCH_ALL).toPattern()
+             """^(function\*?|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{[\s\S]*?\}""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
@@ -92,8 +92,8 @@ object JavaScript {
             override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S):
                 ParseSpec<RC, S> {
               val definition = matcher.group(1)
-              val name = matcher.group(3)
-              if (!name) name = matcher.group(2)
+              var name = matcher.group(3)
+              if (name == null) name = matcher.group(2)
               return ParseSpec.createTerminal(
                   FieldNode(definition!!, name!!, codeStyleProviders), state)
             }
