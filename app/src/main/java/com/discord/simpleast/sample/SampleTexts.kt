@@ -203,7 +203,7 @@ object SampleTexts {
     const { performance } = require('perf_hooks');
     function getMem() {
       return Object.entries(process.memoryUsage())
-               .map(([K, V]) => `${'$'}{K}: ${'$'}{(V / (2 ** 1024)).toFixed(1)}MB`)
+               .map(([K, V]) => `${'$'}{K}: ${'$'}{(V / (1024 ** 2)).toFixed(1)}MB`)
                .join('\n');
     }
     let timer = performance.now();
