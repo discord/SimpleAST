@@ -51,7 +51,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function\*?|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{[\s\S]*?\}""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
+             """^(function\*?|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
@@ -83,7 +83,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_FIELD =
-          Pattern.compile("""^(var|let|const)\s+(?:\{\s*?(.*)\s*?\}|(\w+))""", Pattern.DOTALL)
+          Pattern.compile("""^(var|let|const)(\s+\w+)""", Pattern.DOTALL)
 
       fun <RC, S> createFieldRule(
           codeStyleProviders: CodeStyleProviders<RC>
@@ -92,8 +92,7 @@ object JavaScript {
             override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S):
                 ParseSpec<RC, S> {
               val definition = matcher.group(1)
-              var name = matcher.group(3)
-              if (name == null) name = matcher.group(2)
+              val name = matcher.group(2)
               return ParseSpec.createTerminal(
                   FieldNode(definition!!, name!!, codeStyleProviders), state)
             }
