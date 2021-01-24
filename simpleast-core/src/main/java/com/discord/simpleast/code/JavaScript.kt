@@ -34,10 +34,10 @@ object JavaScript {
   )
 
   class FunctionNode<RC>(
-    pre: String?, signature: String?, params: String,
+    pre: String, signature: String?, params: String,
     codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
-      pre?.let { StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider) },
+      StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
       signature?.let { StyleNode.TextStyledNode(signature, codeStyleProviders.identifierStyleProvider) },
       StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider)
   ) {
@@ -51,7 +51,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function\*?|static|get|set)? *?(\w+)?( *?\(.*?\)) *?\{""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
+             """^(function\*?|static|get|set|async) *?(\w+)?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
@@ -59,7 +59,7 @@ object JavaScript {
               val definition = matcher.group(1)
               val signature = matcher.group(2)
               val params = matcher.group(3)
-              return ParseSpec.createTerminal(FunctionNode(definition, signature, params!!, codeStyleProviders), state)
+              return ParseSpec.createTerminal(FunctionNode(definition!!, signature, params!!, codeStyleProviders), state)
             }
           }
     }
