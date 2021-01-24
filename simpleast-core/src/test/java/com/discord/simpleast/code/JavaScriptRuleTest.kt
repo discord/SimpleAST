@@ -33,7 +33,7 @@ class JavaScriptRulesTest {
 
   @Test
   fun comments() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       /** Multiline
           Comment
@@ -42,43 +42,43 @@ class JavaScriptRulesTest {
       // Line comment
       
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        """
+        "
           /** Multiline
               Comment
           */
-        """.trimIndent(),
+        ".trimIndent(),
         "// Inlined",
         "// Line comment")
   }
 
   @Test
   fun strings() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       const x = 'Hello';
       const y = "world";
       console.log(`Hi`);
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        """'Hello'""",
-        """\"world\"""",
-        """`Hi`""")
+        "'Hello'",
+        "\"world\"",
+        "`Hi`")
   }
   @Test
   fun stringsMultiline() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       const text = `
       hello
       world
       `;
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "`",
@@ -92,25 +92,25 @@ class JavaScriptRulesTest {
 
   @Test
   fun functions() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       function test(T) {
         // Implementation
       }
       const fn = function() {};
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
     ast.assertNodeContents<JavaScript.FunctionNode<*>>(
-      """function test(T) {
+      "function test(T) {
            // Implementation
-         }""".trimIndent(),
+         }".trimIndent(),
       "function() {}")
   }
 
   @Test
   fun commentedFunction() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       /*
         function test(T) {
@@ -120,23 +120,23 @@ class JavaScriptRulesTest {
       // function O() {}
       console.log(x /* test var */);
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        """
+        "
         /*
           function test(T) {
             throw new Error();
           }
         */
-        """.trimIndent(),
+        ".trimIndent(),
         "// function O() {}",
         "/* test var */")
   }
 
   @Test
   fun keywords() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       const x = 'Test';
       while (true) {}
@@ -151,7 +151,7 @@ class JavaScriptRulesTest {
         return;
       }
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "const", "while", "true", 
         "for", "if", "false",
@@ -161,13 +161,13 @@ class JavaScriptRulesTest {
 
   @Test
   fun numbers() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       let x = 0;
       x += 69;
       Math.max(x, 420);
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
             "0", "69", "420"
    )
@@ -175,13 +175,13 @@ class JavaScriptRulesTest {
 
   @Test
   fun fields() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       var x = 10;
       let foo = 'bar';
       const baz = foo;
         ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
     ast.assertNodeContents<JavaScript.FieldNode<*>>(
         "var x",
         "let foo",
@@ -190,11 +190,11 @@ class JavaScriptRulesTest {
 
   @Test
   fun classDef() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       class Bug extends Error {}
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
     ast.assertNodeContents<CodeNode.DefinitionNode<*>>(
         "class Bug")
@@ -202,23 +202,23 @@ class JavaScriptRulesTest {
 
   @Test
   fun regex() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       /(.*)/g
       /[\$\{\}]/
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.TextStyledNode<*>>("""/(.*)/g""", """/[\$\{\}]/""")
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>("/(.*)/g", "/[\$\{\}]/")
   }
 
   @Test
   fun generics() {
-    val ast = parser.parse("""
+    val ast = parser.parse("
       ```js
       <pending>
       ```
-    """.trimIndent(), TestState())
+    ".trimIndent(), TestState())
 
-   ast.assertNodeContents<StyleNode.TextStyledNode<*>>("""<pending>""")
+   ast.assertNodeContents<StyleNode.TextStyledNode<*>>("<pending>")
   }
