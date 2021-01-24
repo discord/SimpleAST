@@ -45,11 +45,11 @@ class JavaScriptRulesTest {
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        "
+        """
           /** Multiline
               Comment
           */
-        ".trimIndent(),
+        """.trimIndent(),
         "// Inlined",
         "// Line comment")
   }
@@ -102,9 +102,9 @@ class JavaScriptRulesTest {
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<JavaScript.FunctionNode<*>>(
-      "function test(T) {
+      """function test(T) {
            // Implementation
-         }".trimIndent(),
+         }""".trimIndent(),
       "function() {}")
   }
 
@@ -123,13 +123,13 @@ class JavaScriptRulesTest {
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        "
+        """
         /*
           function test(T) {
             throw new Error();
           }
         */
-        ".trimIndent(),
+        """.trimIndent(),
         "// function O() {}",
         "/* test var */")
   }
