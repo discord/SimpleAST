@@ -209,7 +209,7 @@ class JavaScriptRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<StyleNode.TextStyledNode<*>>("/(.*)/g", "/[\$\{\}]/")
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>("/(.*)/g", """/[\$\{\}]/""")
   }
 
   @Test
