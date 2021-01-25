@@ -136,13 +136,11 @@ class JavaScriptRulesTest {
   fun keywords() {
     val ast = parser.parse("""
       ```js
-      const x = 'Test';
       while (true) {}
       for (;;) {}
       if (false) {}
-      class Test {}
+      class {}
       try {
-        // Nothing
       } catch (err) {
         throw
       } finally {
@@ -151,7 +149,7 @@ class JavaScriptRulesTest {
       ```
     """.trimIndent(), TestState())
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        "const", "while", "true", 
+        "while", "true", 
         "for", "if", "false",
         "class", "try", "catch",
         "finally", "return", "throw")
