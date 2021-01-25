@@ -101,10 +101,12 @@ object JavaScript {
   }
 
   class ObjectPropertyNode<RC>(
-      property: String,
+      prefix: String, property: String, suffix: String,
       codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
+      StyleNode.TextStyledNode(prefix, codeStyleProviders.defaultStyleProvider),
       StyleNode.TextStyledNode(property, codeStyleProviders.identifierStyleProvider),
+      StyleNode.TextStyledNode(suffix, codeStyleProviders.defaultStyleProvider),
   ) {
     companion object {
       /**
@@ -115,7 +117,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
-          Pattern.compile("""^(?:\{|\[|\,)\s*?(\w+):""", Pattern.DOTALL)
+          Pattern.compile("""^(\{|\[|\,)(\s*\w+)(:)""", Pattern.DOTALL)
 
       fun <RC, S> createObjectPropertyRule(
           codeStyleProviders: CodeStyleProviders<RC>
@@ -123,9 +125,11 @@ object JavaScript {
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_OBJECT_PROPERTY) {
             override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S):
                 ParseSpec<RC, S> {
-              val property = matcher.group(1)
+              val prefix = matcher.group(1)
+              val property = matcher.group(2)
+              val suffix = matcher.group(3)
               return ParseSpec.createTerminal(
-                  ObjectPropertyNode(property!!, codeStyleProviders), state)
+                  ObjectPropertyNode(prefix!!, property!!, suffix!!, codeStyleProviders), state)
             }
           }
     }
