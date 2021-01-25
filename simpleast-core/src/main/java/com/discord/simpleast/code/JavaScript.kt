@@ -117,7 +117,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
-          Pattern.compile("""^(\{|\[|\,)(\s*\w+)(:)""", Pattern.DOTALL)
+          Pattern.compile("""^([{\[,])(\s*\w+)(:)""", Pattern.DOTALL)
 
       fun <RC, S> createObjectPropertyRule(
           codeStyleProviders: CodeStyleProviders<RC>
