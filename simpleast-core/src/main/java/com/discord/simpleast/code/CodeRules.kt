@@ -189,6 +189,13 @@ object CodeRules {
         PATTERN_TEXT.toMatchGroupRule(),
     )
 
+    val crystalRules = createGenericCodeRules<R, S>(
+        codeStyleProviders,
+        additionalRules = Crystal.createCrystalCodeRules(codeStyleProviders),
+        definitions = arrayOf("def", "class"),
+        builtIns = Crystal.BUILT_INS,
+        keywords = Crystal.KEYWORDS)
+
     return mapOf(
         "kt" to kotlinRules,
         "kotlin" to kotlinRules,
@@ -208,6 +215,9 @@ object CodeRules {
 
         "xml" to xmlRules,
         "http" to xmlRules,
+
+        "cr" to crystalRules,
+        "crystal" to crystalRules,
     )
   }
 

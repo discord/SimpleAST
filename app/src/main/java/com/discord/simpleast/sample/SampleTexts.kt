@@ -197,6 +197,38 @@ object SampleTexts {
     ```
   """
 
+  private const val CODE_BLOCK_CRYSTAL = """
+    Crystal code block:
+    ```cr    
+    regex = /\bs|d\b/i
+    match = regex.match("start here but end here")
+
+    # New Class
+
+    @[Species(type: "human")]
+    class Person(T)
+      property balance
+      
+      def initialize(@name : String)
+        @age = 0
+        @balance = 100
+      end
+
+      def grow(years = 1)
+        @age += years
+      end
+
+      def info
+        puts "My name is #{@name} and I am #{@age}"
+      end
+      
+      def buy(item : T)
+        @balance -= 5
+      end
+    end
+    ```
+  """
+
   const val CODE_BLOCKS = """
     # Code block samples
     inlined:```py language code blocks need newline```
@@ -211,6 +243,7 @@ object SampleTexts {
     $CODE_BLOCK_RUST
     $CODE_BLOCK_SQL
     $CODE_BLOCK_XML
+    $CODE_BLOCK_CRYSTAL
     
     That should do it....
   """
