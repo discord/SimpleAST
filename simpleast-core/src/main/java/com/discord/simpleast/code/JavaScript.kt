@@ -149,7 +149,7 @@ object JavaScript {
    * ```
    */
   private val PATTERN_JAVASCRIPT_GENERIC = 
-      Pattern.compile("""^<(.*)>""", Pattern.DOTALL)
+      Pattern.compile("""^<(.*)>""")
 
   /**
    * Matches against a JavaScript comment.
