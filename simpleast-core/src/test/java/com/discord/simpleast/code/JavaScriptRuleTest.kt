@@ -222,3 +222,4 @@ class JavaScriptRulesTest {
 
    ast.assertNodeContents<StyleNode.TextStyledNode<*>>("<pending>")
   }
+}
