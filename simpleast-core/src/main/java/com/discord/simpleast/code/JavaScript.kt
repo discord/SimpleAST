@@ -115,7 +115,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
-          Pattern.compile("""^[\{\[\,]\s*?(\w+):""", Pattern.DOTALL)
+          Pattern.compile("""^(?:\{|\[|\,)\s*?(\w+):""", Pattern.DOTALL)
 
       fun <RC, S> createObjectPropertyRule(
           codeStyleProviders: CodeStyleProviders<RC>
@@ -180,7 +180,7 @@ object JavaScript {
       listOf(
           PATTERN_JAVASCRIPT_COMMENTS.toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
           PATTERN_JAVASCRIPT_STRINGS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
-          ObjectPropertyNode.createObjectPropertyRule(stylesProvider = codeStyleProviders.identifierStyleProvider),
+          ObjectPropertyNode.createObjectPropertyRule(codeStyleProviders),
           PATTERN_JAVASCRIPT_GENERIC.toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
           PATTERN_JAVASCRIPT_REGEX.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
           FieldNode.createFieldRule(codeStyleProviders),
