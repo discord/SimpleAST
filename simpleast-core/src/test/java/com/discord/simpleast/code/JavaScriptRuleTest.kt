@@ -58,9 +58,9 @@ class JavaScriptRulesTest {
   fun strings() {
     val ast = parser.parse("""
       ```js
-      const x = 'Hello';
-      const y = "world";
-      console.log(`Hi`);
+      x = 'Hello';
+      y = "world";
+      log(`Hi`);
       ```
     """.trimIndent(), TestState())
 
@@ -73,7 +73,7 @@ class JavaScriptRulesTest {
   fun stringsMultiline() {
     val ast = parser.parse("""
       ```js
-      const text = `
+      text = `
       hello
       world
       `;
@@ -81,12 +81,12 @@ class JavaScriptRulesTest {
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        "`",
         """
+          `
           hello
           world
+          `
         """.trimIndent(),
-        "`"
     )
   }
 
@@ -97,15 +97,13 @@ class JavaScriptRulesTest {
       function test(T) {
         // Implementation
       }
-      const fn = function() {};
+      fn = function () {};
       ```
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<JavaScript.FunctionNode<*>>(
-      """function test(T) {
-           // Implementation
-         }""".trimIndent(),
-      "function() {}")
+      "function test(T)",
+      "function ()")
   }
 
   @Test
@@ -118,7 +116,7 @@ class JavaScriptRulesTest {
         }
       */
       // function O() {}
-      console.log(x /* test var */);
+      log(x /* test var */);
       ```
     """.trimIndent(), TestState())
 
@@ -146,7 +144,7 @@ class JavaScriptRulesTest {
       try {
         // Nothing
       } catch (err) {
-        console.error(err);
+        throw
       } finally {
         return;
       }
@@ -156,16 +154,16 @@ class JavaScriptRulesTest {
         "const", "while", "true", 
         "for", "if", "false",
         "class", "try", "catch",
-        "finally", "return")
+        "finally", "return", "throw")
   }
 
   @Test
   fun numbers() {
     val ast = parser.parse("""
       ```js
-      let x = 0;
+      x = 0;
       x += 69;
-      Math.max(x, 420);
+      max(x, 420);
       ```
     """.trimIndent(), TestState())
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
@@ -177,14 +175,14 @@ class JavaScriptRulesTest {
   fun fields() {
     val ast = parser.parse("""
       ```js
-      var x = 10;
-      let foo = 'bar';
-      const baz = foo;
+      var foo = x;
+      let bar = y;
+      const baz = z;
         ```
     """.trimIndent(), TestState())
     ast.assertNodeContents<JavaScript.FieldNode<*>>(
-        "var x",
-        "let foo",
+        "var foo",
+        "let bar",
         "const baz")
   }
 
@@ -192,7 +190,7 @@ class JavaScriptRulesTest {
   fun classDef() {
     val ast = parser.parse("""
       ```js
-      class Bug extends Error {}
+      class Bug {}
       ```
     """.trimIndent(), TestState())
 
