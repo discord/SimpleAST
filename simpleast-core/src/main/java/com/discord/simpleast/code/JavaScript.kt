@@ -100,6 +100,37 @@ object JavaScript {
     }
   }
 
+  class ObjectPropertyNode<RC>(
+      property: String,
+      codeStyleProviders: CodeStyleProviders<RC>
+  ) : Node.Parent<RC>(
+      StyleNode.TextStyledNode(property, codeStyleProviders.identifierStyleProvider),
+  ) {
+    companion object {
+      /**
+       * Matches against a JavaScript object property.
+       *
+       * ```
+       * { foo: 'bar' }
+       * ```
+       */
+      private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
+          Pattern.compile("""^[\{\[\,]\s*?(\w+):""", Pattern.DOTALL)
+
+      fun <RC, S> createObjectPropertyRule(
+          codeStyleProviders: CodeStyleProviders<RC>
+      ) =
+          object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_OBJECT_PROPERTY) {
+            override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S):
+                ParseSpec<RC, S> {
+              val property = matcher.group(1)
+              return ParseSpec.createTerminal(
+                  ObjectPropertyNode(property!!, codeStyleProviders), state)
+            }
+          }
+    }
+  }
+
   /**
    * Matches against a JavaScript regex.
    *
@@ -132,16 +163,6 @@ object JavaScript {
       Pattern.compile("""^(?:(?://.*?(?=\n|$))|(/\*.*?\*/))""", Pattern.DOTALL)
 
   /**
-   * Matches against a JavaScript object property.
-   *
-   * ```
-   * { foo: 'bar' }
-   * ```
-   */
-  private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
-      Pattern.compile("""^[\{\[\,]\s*?(\w+):""", Pattern.DOTALL)
-
-  /**
    * Matches against a JavaScript string.
    *
    * ```
@@ -159,7 +180,7 @@ object JavaScript {
       listOf(
           PATTERN_JAVASCRIPT_COMMENTS.toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
           PATTERN_JAVASCRIPT_STRINGS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
-          PATTERN_JAVASCRIPT_OBJECT_PROPERTY.toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
+          ObjectPropertyNode.createObjectPropertyRule(stylesProvider = codeStyleProviders.identifierStyleProvider),
           PATTERN_JAVASCRIPT_GENERIC.toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
           PATTERN_JAVASCRIPT_REGEX.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
           FieldNode.createFieldRule(codeStyleProviders),
