@@ -113,6 +113,23 @@ class CrystalRulesTest {
   }
 
   @Test
+  fun symbols() {
+    val ast = parser.parse("""
+      ```cr
+      :symbol
+      :[]=
+      :<<
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        ":symbol",
+        ":[]=",
+        ":<<"
+    )
+  }
+
+  @Test
   fun functions() {
     val ast = parser.parse("""
       ```cr
