@@ -228,6 +228,7 @@ object SampleTexts {
     $CODE_BLOCK_RUST
     $CODE_BLOCK_SQL
     $CODE_BLOCK_XML
+    $CODE_BLOCK_JAVASCRIPT
     
     That should do it....
   """
