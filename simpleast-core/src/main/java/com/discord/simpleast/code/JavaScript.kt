@@ -15,7 +15,7 @@ object JavaScript {
      "public|private|protected",
      "import|export|default|package",
      "class|enum|interface",
-     "function|super|this|extends|implements|arguments",
+     "function|super|extends|implements|arguments",
      "var|let|const|static|get|set|new",
      "return|break|continue|yield|void",
      "if|else|for|while|do|switch|async|await|case|try|catch|finally|delete|throw|NaN|Infinity",
@@ -26,11 +26,12 @@ object JavaScript {
 
 
   val BUILT_INS: Array<String> = arrayOf(
-    "String|Boolean|RegExp|Number|Date|Math|JSON|Symbol",
-    "Function|Promise",
-    "Array|Object|Map|Set|Uint8Array|Uint16Array|Uint32Array|Uint8ClampedArray|Buffer",
-    "console|process|require|isNaN|parseInt|parseFloat|encodeURI|decodeURI|encodeURIComponent|decodeURIComponent",
-    "Error|SyntaxError|TypeError|RangeError|ReferenceError|EvalError|AggregateError"
+    "String|Boolean|RegExp|Number|Date|Math|JSON|Symbol|BigInt|Atomics|DataView",
+    "Function|Promise|Generator|GeneratorFunction|AsyncFunction|AsyncGenerator|AsyncGeneratorFunction",
+    "Array|Object|Map|Set|WeakMap|WeakSet|Int8Array|Int16Array|Int32Array|Uint8Array|Uint16Array|Uint32Array|Uint8ClampedArray|Float32Array|Float64Array|BigInt64Array|BigUint64Array|Buffer|ArrayBuffer|SharedArrayBuffer",
+    "Reflect|Proxy|Intl|WebAssembly",
+    "console|process|require|isNaN|parseInt|parseFloat|encodeURI|decodeURI|encodeURIComponent|decodeURIComponent|this|global|globalThis|eval|isFinite|module",
+    "Error|SyntaxError|TypeError|RangeError|ReferenceError|EvalError|InternalError|URIError|AggregateError"
   )
 
   class FunctionNode<RC>(
