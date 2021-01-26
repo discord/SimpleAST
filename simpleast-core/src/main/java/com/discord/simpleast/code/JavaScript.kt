@@ -30,7 +30,7 @@ object JavaScript {
     "Function|Promise|Generator|GeneratorFunction|AsyncFunction|AsyncGenerator|AsyncGeneratorFunction",
     "Array|Object|Map|Set|WeakMap|WeakSet|Int8Array|Int16Array|Int32Array|Uint8Array|Uint16Array|Uint32Array|Uint8ClampedArray|Float32Array|Float64Array|BigInt64Array|BigUint64Array|Buffer|ArrayBuffer|SharedArrayBuffer",
     "Reflect|Proxy|Intl|WebAssembly",
-    "console|process|require|isNaN|parseInt|parseFloat|encodeURI|decodeURI|encodeURIComponent|decodeURIComponent|this|global|globalThis|eval|isFinite|module",
+    "console|process|require|isNaN|parseInt|parseFloat|encodeURI|decodeURI|encodeURIComponent|decodeURIComponent|this|global|globalThis|eval|isFinite|module|setTimeout|setInterval|clearTimeout|clearInterval",
     "Error|SyntaxError|TypeError|RangeError|ReferenceError|EvalError|InternalError|URIError|AggregateError"
   )
 
