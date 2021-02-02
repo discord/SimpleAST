@@ -192,7 +192,7 @@ object CodeRules {
     val javascriptRules = createGenericCodeRules<R, S>(
         codeStyleProviders,
         additionalRules = JavaScript.createJavaScriptCodeRules(codeStyleProviders),
-        definitions = arrayOf("class", "interface"),
+        definitions = arrayOf("class"),
         builtIns = JavaScript.BUILT_INS,
         keywords = JavaScript.KEYWORDS)
 
