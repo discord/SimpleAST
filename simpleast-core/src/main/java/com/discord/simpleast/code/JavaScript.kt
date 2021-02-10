@@ -23,7 +23,6 @@ object JavaScript {
      "true|false|null|undefined"
   )
 
-
   val BUILT_INS: Array<String> = arrayOf(
     "String|Boolean|RegExp|Number|Date|Math|JSON|Symbol|BigInt|Atomics|DataView",
     "Function|Promise|Generator|GeneratorFunction|AsyncFunction|AsyncGenerator|AsyncGeneratorFunction",
