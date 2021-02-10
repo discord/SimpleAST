@@ -98,12 +98,22 @@ class JavaScriptRulesTest {
         // Implementation
       }
       fn = function () {};
+      function* generator() {}
+      static test() {}
+      async fetch() {}
+      get tokens() {}
+      set constants() {}
       ```
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<JavaScript.FunctionNode<*>>(
       "function test(T)",
-      "function ()")
+      "function ()",
+      "function* generator()",
+      "static test()",
+      "async fetch()",
+      "get tokens()",
+      "set constants()")
   }
 
   @Test
@@ -218,4 +228,15 @@ class JavaScriptRulesTest {
 
    ast.assertNodeContents<StyleNode.TextStyledNode<*>>("<pending>")
   }
+
+  @Test
+  fun objectProperties() {
+    val ast = parser.parse("""
+      ```js
+      { foo: bar }
+      ```
+    """.trimIndent(), TestState())
+
+  ast.assertNodeContents<JavaScript.ObjectPropertyNode<*>>("{ foo:")
+ }
 }
