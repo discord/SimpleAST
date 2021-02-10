@@ -210,7 +210,7 @@ object SampleTexts {
     let timer = performance.now();
     for (let i = 0; i < 50; i++) {
       if (memories.length === 5) break;
-      if (i % 5) memories.push(getMem());
+      if (i % 5 === 0) memories.push(getMem());
     }
     timer = performance.now() - timer;
 
