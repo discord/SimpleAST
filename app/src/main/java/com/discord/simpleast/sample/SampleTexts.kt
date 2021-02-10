@@ -206,8 +206,12 @@ object SampleTexts {
                .map(([K, V]) => `${'$'}{K}: ${'$'}{(V / (1024 ** 2)).toFixed(1)}MB`)
                .join('\n');
     }
+    const memories = [];
     let timer = performance.now();
-    for (let i = 0; i < 50; i++) getMem();
+    for (let i = 0; i < 50; i++) {
+      if (memories.length === 5) break;
+      if (i % 5) memories.push(getMem());
+    }
     timer = performance.now() - timer;
 
     console.log(`Took ${'$'}{timer} ms`);
