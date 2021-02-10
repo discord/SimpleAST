@@ -61,7 +61,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function\*?|static|get|set|async)(\s+(\w+))?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
+             """^(function\*?|static|get|set|async)(\s+([a-zA-Z_$][a-zA-Z0-9_$]+))?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
@@ -93,7 +93,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_FIELD =
-          Pattern.compile("""^(var|let|const)(\s+\w+)""", Pattern.DOTALL)
+          Pattern.compile("""^(var|let|const)(\s+[a-zA-Z_$][a-zA-Z0-9_$]+)""", Pattern.DOTALL)
 
       fun <RC, S> createFieldRule(
           codeStyleProviders: CodeStyleProviders<RC>
@@ -127,7 +127,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
-          Pattern.compile("""^([{\[,])(\s*\w+)(:)""", Pattern.DOTALL)
+          Pattern.compile("""^([{\[,])(\s*[a-zA-Z0-9_$]+)(:)""", Pattern.DOTALL)
 
       fun <RC, S> createObjectPropertyRule(
           codeStyleProviders: CodeStyleProviders<RC>
