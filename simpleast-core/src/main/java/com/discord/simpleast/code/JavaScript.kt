@@ -27,10 +27,16 @@ object JavaScript {
   val BUILT_INS: Array<String> = arrayOf(
     "String|Boolean|RegExp|Number|Date|Math|JSON|Symbol|BigInt|Atomics|DataView",
     "Function|Promise|Generator|GeneratorFunction|AsyncFunction|AsyncGenerator|AsyncGeneratorFunction",
-    "Array|Object|Map|Set|WeakMap|WeakSet|Int8Array|Int16Array|Int32Array|Uint8Array|Uint16Array|Uint32Array|Uint8ClampedArray|Float32Array|Float64Array|BigInt64Array|BigUint64Array|Buffer|ArrayBuffer|SharedArrayBuffer",
+    "Array|Object|Map|Set|WeakMap|WeakSet|Int8Array|Int16Array|Int32Array|Uint8Array|Uint16Array",
+    "Uint32Array|Uint8ClampedArray|Float32Array|Float64Array|BigInt64Array|BigUint64Array|Buffer",
+    "ArrayBuffer|SharedArrayBuffer",
     "Reflect|Proxy|Intl|WebAssembly",
-    "console|process|require|isNaN|parseInt|parseFloat|encodeURI|decodeURI|encodeURIComponent|decodeURIComponent|this|global|globalThis|eval|isFinite|module|setTimeout|setInterval|clearTimeout|clearInterval|setImmediate|clearImmediate|queueMicrotask|document|window",
-    "Error|SyntaxError|TypeError|RangeError|ReferenceError|EvalError|InternalError|URIError|AggregateError"
+    "console|process|require|isNaN|parseInt|parseFloat|encodeURI|decodeURI|encodeURIComponent",
+    "decodeURIComponent|this|global|globalThis|eval|isFinite|module",
+    "setTimeout|setInterval|clearTimeout|clearInterval|setImmediate|clearImmediate",
+    "queueMicrotask|document|window",
+    "Error|SyntaxError|TypeError|RangeError|ReferenceError|EvalError|InternalError|URIError",
+    "AggregateError"
   )
 
   class FunctionNode<RC>(
@@ -48,10 +54,15 @@ object JavaScript {
          * ```
          * function foo(bar)
          * function baz()
+         * async test()
+         * static nice()
+         * function* generator()
+         * get token()
+         * set internals()
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function\*?|static|get|set|async)(\s+\w+)?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
+             """^(function\*?|static|get|set|async)(\s+(\w+))?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
@@ -178,7 +189,7 @@ object JavaScript {
   private val PATTERN_JAVASCRIPT_STRINGS = 
       Pattern.compile("""^('[\s\S]*?(?<!\\)'|"[\s\S]*?(?<!\\)"|`[\s\S]*?(?<!\\)`)(?=\W|\s|$)""")
 
-  internal fun <RC, S> createJavaScriptCodeRules(
+  internal fun <RC, S> createCodeRules(
       codeStyleProviders: CodeStyleProviders<RC>
   ): List<Rule<RC, Node<RC>, S>> =
       listOf(
