@@ -35,7 +35,10 @@ object JavaScript {
     "setTimeout|setInterval|clearTimeout|clearInterval|setImmediate|clearImmediate",
     "queueMicrotask|document|window",
     "Error|SyntaxError|TypeError|RangeError|ReferenceError|EvalError|InternalError|URIError",
-    "AggregateError"
+    "AggregateError|escape|unescape|URL|URLSearchParams|TextEncoder|TextDecoder",
+    "AbortController|AbortSignal|EventTarget|Event|MessageChannel",
+    "MessagePort|MessageEvent|FinalizationRegistry|WeakRef",
+    "regeneratorRuntime"
   )
 
   class FunctionNode<RC>(
