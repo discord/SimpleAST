@@ -197,6 +197,27 @@ object SampleTexts {
     ```
   """
 
+  private const val CODE_BLOCK_JAVASCRIPT = """
+    JavaScript code block:
+    ```js
+    const { performance } = require('perf_hooks');
+    function getMem() {
+      return Object.entries(process.memoryUsage())
+               .map(([K, V]) => `${'$'}{K}: ${'$'}{(V / (1024 ** 2)).toFixed(1)}MB`)
+               .join('\n');
+    }
+    const memories = [];
+    let timer = performance.now();
+    for (let i = 0; i < 50; i++) {
+      if (memories.length === 5) break;
+      else if (i % 5 === 0) memories.push(getMem());
+    }
+    timer = performance.now() - timer;
+
+    console.log(`Took ${'$'}{timer} ms`);
+    ```
+  """
+
   const val CODE_BLOCKS = """
     # Code block samples
     inlined:```py language code blocks need newline```
@@ -211,6 +232,7 @@ object SampleTexts {
     $CODE_BLOCK_RUST
     $CODE_BLOCK_SQL
     $CODE_BLOCK_XML
+    $CODE_BLOCK_JAVASCRIPT
     
     That should do it....
   """
