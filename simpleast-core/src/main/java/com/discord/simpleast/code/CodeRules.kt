@@ -195,6 +195,13 @@ object CodeRules {
         definitions = arrayOf("def", "class"),
         builtIns = Crystal.BUILT_INS,
         keywords = Crystal.KEYWORDS)
+        
+    val javascriptRules = createGenericCodeRules<R, S>(
+        codeStyleProviders,
+        additionalRules = JavaScript.createCodeRules(codeStyleProviders),
+        definitions = arrayOf("class"),
+        builtIns = JavaScript.BUILT_INS,
+        keywords = JavaScript.KEYWORDS)
 
     return mapOf(
         "kt" to kotlinRules,
@@ -218,6 +225,9 @@ object CodeRules {
 
         "cr" to crystalRules,
         "crystal" to crystalRules,
+      
+        "js" to javascriptRules,
+        "javascript" to javascriptRules,
     )
   }
 
