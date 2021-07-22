@@ -96,7 +96,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_FIELD =
-          Pattern.compile("""^(var|let|const)(\s+[a-zA-Z_$](?:[a-zA-Z0-9_$])*?)""", Pattern.DOTALL)
+          Pattern.compile("""^(var|let|const)(\s+[a-zA-Z_$](?:[a-zA-Z0-9_$])*)""", Pattern.DOTALL)
 
       fun <RC, S> createFieldRule(
           codeStyleProviders: CodeStyleProviders<RC>
