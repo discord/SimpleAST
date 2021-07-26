@@ -107,13 +107,13 @@ class JavaScriptRulesTest {
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<JavaScript.FunctionNode<*>>(
-      "function test(T)",
-      "function ()",
-      "function* generator()",
-      "static test()",
-      "async fetch()",
-      "get tokens()",
-      "set constants()")
+      "function test(T) {",
+      "function () {",
+      "function* generator() {",
+      "static test() {",
+      "async fetch() {",
+      "get tokens() {",
+      "set constants() {")
   }
 
   @Test
