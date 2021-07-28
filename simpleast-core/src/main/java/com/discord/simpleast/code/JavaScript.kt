@@ -12,7 +12,7 @@ import java.util.regex.Pattern
 object JavaScript {
 
   val KEYWORDS: Array<String> = arrayOf(
-     "import|export|default|package",
+     "import|from|export|default|package",
      "class|enum",
      "function|super|extends|implements|arguments",
      "var|let|const|static|get|set|new",
@@ -42,12 +42,13 @@ object JavaScript {
   )
 
   class FunctionNode<RC>(
-    pre: String, signature: String?, params: String,
+    pre: String, signature: String?, params: String, scope: String,
     codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
       StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
       signature?.let { StyleNode.TextStyledNode(signature, codeStyleProviders.identifierStyleProvider) },
       StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider)
+      StyleNode.TextStyledNode(scope, codeStyleProviders.defaultStyleProvider)
   ) {
       companion object {
         /**
@@ -64,7 +65,7 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^(function\*?|static|get|set|async)(\s+[a-zA-Z_$](?:[a-zA-Z0-9_$])*?)?( *?\(.*?\))""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
+             """^(function\*?|static|get|set|async)(\s+[a-zA-Z_$](?:[a-zA-Z0-9_$])*?)?( *?\(.*?\))(\s*\{)""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
@@ -72,7 +73,8 @@ object JavaScript {
               val definition = matcher.group(1)
               val signature = matcher.group(2)
               val params = matcher.group(3)
-              return ParseSpec.createTerminal(FunctionNode(definition!!, signature, params!!, codeStyleProviders), state)
+              val scope = matcher.group(4)
+              return ParseSpec.createTerminal(FunctionNode(definition!!, signature, params!!, scope!!, codeStyleProviders), state)
             }
           }
     }
@@ -130,7 +132,7 @@ object JavaScript {
        * ```
        */
       private val PATTERN_JAVASCRIPT_OBJECT_PROPERTY = 
-          Pattern.compile("""^([{\[,])(\s*[a-zA-Z0-9_$]*)(:)""", Pattern.DOTALL)
+          Pattern.compile("""^([{\[,])(\s*[a-zA-Z0-9_$]*)(\s*:)""", Pattern.DOTALL)
 
       fun <RC, S> createObjectPropertyRule(
           codeStyleProviders: CodeStyleProviders<RC>
@@ -156,7 +158,7 @@ object JavaScript {
    * ```
    */
    private val PATTERN_JAVASCRIPT_REGEX = 
-       Pattern.compile("""^/.*?/(?:\w*)?""", Pattern.DOTALL)
+       Pattern.compile("""^/.*?/(?:\w*)?""")
 
   /**
    * Matches against a JavaScript generic.
@@ -189,7 +191,7 @@ object JavaScript {
    * ```
    */
   private val PATTERN_JAVASCRIPT_STRINGS = 
-      Pattern.compile("""^('[\s\S]*?(?<!\\)'|"[\s\S]*?(?<!\\)"|`[\s\S]*?(?<!\\)`)(?=\W|\s|$)""")
+      Pattern.compile("""^('.*?(?<!\\)'|".*?(?<!\\)"|`[\s\S]*?(?<!\\)`)(?=\W|\s|$)""")
 
   internal fun <RC, S> createCodeRules(
       codeStyleProviders: CodeStyleProviders<RC>
