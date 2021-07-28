@@ -41,7 +41,7 @@ object CodeRules {
       Pattern.compile("""^```(?:([\w+\-.]+?)?(\s*\n))?([^\n].*?)\n*```""", Pattern.DOTALL)
 
   val PATTERN_CODE_INLINE: Pattern =
-      Pattern.compile("""^`([^`]*?)`""", Pattern.DOTALL)
+      Pattern.compile("""^`([^`]+)`|``([^`]+)``""", Pattern.DOTALL)
 
   private const val CODE_BLOCK_LANGUAGE_GROUP = 1
   private const val CODE_BLOCK_WS_PREFIX = 2
