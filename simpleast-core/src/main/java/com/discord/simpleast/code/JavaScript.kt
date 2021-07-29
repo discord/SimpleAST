@@ -38,7 +38,7 @@ object JavaScript {
     "AggregateError|escape|unescape|URL|URLSearchParams|TextEncoder|TextDecoder",
     "AbortController|AbortSignal|EventTarget|Event|MessageChannel",
     "MessagePort|MessageEvent|FinalizationRegistry|WeakRef",
-    "regeneratorRuntime"
+    "regeneratorRuntime|performance"
   )
 
   class FunctionNode<RC>(
@@ -47,7 +47,7 @@ object JavaScript {
   ) : Node.Parent<RC>(
       StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
       signature?.let { StyleNode.TextStyledNode(signature, codeStyleProviders.identifierStyleProvider) },
-      StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider)
+      StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider),
       StyleNode.TextStyledNode(scope, codeStyleProviders.defaultStyleProvider)
   ) {
       companion object {
