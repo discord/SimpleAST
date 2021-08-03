@@ -107,33 +107,13 @@ class JavaScriptRulesTest {
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<JavaScript.FunctionNode<*>>(
-      "test(T) {",
-      "() {",
-      "generator() {",
-      "test() {",
-      "fetch() {",
-      "tokens() {",
-      "constants() {")
-  }
-
-  @Test
-  fun arrowFunctions() {
-    val ast = parser.parse("""
-      ```js
-        test => {}
-        test => h
-        (test) => {}
-        (test) => h
-        (...args) => {}
-      ```
-    """.trimIndent(), TestState())
-
-    ast.assertNodeContents<JavaScript.ArrowFunctionNode<*>>(
-      "test =>",
-      "test =>",
-      "(test) =>",
-      "(test) =>",
-      "(...args) =>")
+      "function test(T)",
+      "function () {",
+      "function* generator() {",
+      "static test() {",
+      "async fetch() {",
+      "get tokens() {",
+      "set constants() {")
   }
 
   @Test

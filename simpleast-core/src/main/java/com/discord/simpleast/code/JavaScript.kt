@@ -42,12 +42,12 @@ object JavaScript {
   )
 
   class FunctionNode<RC>(
-    signature: String?, params: String, scope: String,
+    pre: String, signature: String?, params: String,
     codeStyleProviders: CodeStyleProviders<RC>
   ) : Node.Parent<RC>(
+      StyleNode.TextStyledNode(pre, codeStyleProviders.keywordStyleProvider),
       signature?.let { StyleNode.TextStyledNode(signature, codeStyleProviders.identifierStyleProvider) },
-      StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider),
-      StyleNode.TextStyledNode(scope, codeStyleProviders.defaultStyleProvider)
+      StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider)
   ) {
       companion object {
         /**
@@ -64,47 +64,15 @@ object JavaScript {
          * ```
          */
          private val PATTERN_JAVASCRIPT_FUNC = 
-             """^([a-zA-Z_$][a-zA-Z0-9_$]*)?(\s*\(.*\))(\s*\{)""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
+             """^(function\*?|static|get|set|async)(\s+[a-zA-Z_$][a-zA-Z0-9_$]*)?(\s*\(.*?\))""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
 
          fun <RC, S> createFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
           object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_FUNC) {
             override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S): ParseSpec<RC, S> {
-              val signature = matcher.group(1)
-              val params = matcher.group(2)
-              val scope = matcher.group(3)
-              return ParseSpec.createTerminal(FunctionNode(signature, params!!, scope!!, codeStyleProviders), state)
-            }
-          }
-    }
-  }
-
-  class ArrowFunctionNode<RC>(
-      params: String, arrow: String,
-      codeStyleProviders: CodeStyleProviders<RC>
-  ) : Node.Parent<RC>(
-      StyleNode.TextStyledNode(params, codeStyleProviders.paramsStyleProvider),
-      StyleNode.TextStyledNode(arrow, codeStyleProviders.defaultStyleProvider)
-  ) {
-      companion object {
-        /**
-         * Matches againt a JavaScript arrow function declaration.
-         *
-         * ```
-         * file => {}
-         * file => !file
-         * (file) => 1
-         * () => {}
-         * ```
-         */
-         private val PATTERN_JAVASCRIPT_ARROW_FUNC =
-             """^([a-zA-Z_$][a-zA-Z0-9_$]*|\(.*\))(\s*=>)""".toRegex(RegexOption.DOT_MATCHES_ALL).toPattern()
-
-         fun <RC, S> createArrowFunctionRule(codeStyleProviders: CodeStyleProviders<RC>) =
-          object : Rule<RC, Node<RC>, S>(PATTERN_JAVASCRIPT_ARROW_FUNC) {
-            override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S): ParseSpec<RC, S> {
-              val params = matcher.group(1)
-              val arrow = matcher.group(2)
-              return ParseSpec.createTerminal(ArrowFunctionNode(params!!, arrow!!, codeStyleProviders), state)
+              val pre = matcher.group(1)
+              val signature = matcher.group(2)
+              val params = matcher.group(3)
+              return ParseSpec.createTerminal(FunctionNode(pre!!, signature, params!!, codeStyleProviders), state)
             }
           }
     }
@@ -234,6 +202,5 @@ object JavaScript {
           PATTERN_JAVASCRIPT_REGEX.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
           FieldNode.createFieldRule(codeStyleProviders),
           FunctionNode.createFunctionRule(codeStyleProviders),
-          ArrowFunctionNode.createArrowFunctionRule(codeStyleProviders),
       )
 }

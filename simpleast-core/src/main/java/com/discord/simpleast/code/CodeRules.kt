@@ -41,7 +41,7 @@ object CodeRules {
       Pattern.compile("""^```(?:([\w+\-.]+?)?(\s*\n))?([^\n].*?)\n*```""", Pattern.DOTALL)
 
   val PATTERN_CODE_INLINE: Pattern =
-      Pattern.compile("""^`([^`]*)`|``([^`]*)``""", Pattern.DOTALL)
+      Pattern.compile("""^(``?)([^`]*)\1""", Pattern.DOTALL)
 
   private const val CODE_BLOCK_LANGUAGE_GROUP = 1
   private const val CODE_BLOCK_WS_PREFIX = 2
@@ -291,7 +291,7 @@ object CodeRules {
     return object : Rule<R, Node<R>, S>(PATTERN_CODE_INLINE) {
       override fun parse(matcher: Matcher, parser: Parser<R, in Node<R>, S>, state: S)
           : ParseSpec<R, S> {
-        val codeBody = (matcher.group(1) ?: matcher.group(2)).orEmpty()
+        val codeBody = matcher.group(2).orEmpty()
         if (codeBody.isEmpty()) {
           return ParseSpec.createTerminal(TextNode(matcher.group()), state)
         }
