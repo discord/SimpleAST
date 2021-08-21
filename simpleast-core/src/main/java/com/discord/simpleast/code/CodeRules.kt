@@ -203,6 +203,27 @@ object CodeRules {
         builtIns = JavaScript.BUILT_INS,
         keywords = JavaScript.KEYWORDS)
 
+    val goRules = createGenericCodeRules<R, S>(
+        codeStyleProviders,
+        additionalRules = listOf(
+            Pattern.compile("""^(?:(?://.*?(?=\n|$))|(/\*.*?\*/))""", Pattern.DOTALL)
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
+            Pattern.compile("""^(".*?(?<!\\)"|`[\s\S]*?(?<!\\)`)(?=\W|\s|$)""")
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
+            Pattern.compile("""^func""")
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.keywordStyleProvider),
+            Pattern.compile("""^[a-z0-9_]+(?=\()""", Pattern.CASE_INSENSITIVE)
+                .toMatchGroupRule(stylesProvider = codeStyleProviders.identifierStyleProvider),
+        ),
+        definitions = arrayOf("package", "type", "var|const"),
+        builtIns = arrayOf(
+            "true|false|bool",
+            "byte|complex(?:64|128)|error|float(?:32|64)|rune|string|u?int(?:8|16|32|64)?|uintptr"
+        ),
+        "break|case|chan|continue|default|defer|else|fallthrough|for|go(?:to)?|if|import|interface|map|range|return|select|switch|struct",
+        "type|var|const"
+    )
+
     return mapOf(
         "kt" to kotlinRules,
         "kotlin" to kotlinRules,
@@ -228,6 +249,8 @@ object CodeRules {
       
         "js" to javascriptRules,
         "javascript" to javascriptRules,
+
+        "go" to goRules,
     )
   }
 
