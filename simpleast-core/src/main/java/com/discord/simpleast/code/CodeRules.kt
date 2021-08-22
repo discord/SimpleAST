@@ -217,7 +217,7 @@ object CodeRules {
         ),
         definitions = arrayOf("package", "type", "var|const"),
         builtIns = arrayOf(
-            "true|false|bool",
+            "nil|iota|true|false|bool",
             "byte|complex(?:64|128)|error|float(?:32|64)|rune|string|u?int(?:8|16|32|64)?|uintptr"
         ),
         "break|case|chan|continue|default|defer|else|fallthrough|for|go(?:to)?|if|import|interface|map|range|return|select|switch|struct",
