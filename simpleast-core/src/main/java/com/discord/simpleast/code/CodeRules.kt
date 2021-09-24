@@ -116,9 +116,11 @@ object CodeRules {
             "string|bool|double|float|bytes",
             "int32|uint32|sint32|int64|unit64|sint64",
             "map"),
-        "required|repeated|optional|option|oneof|default|reserved",
-        "package|import",
-        "rpc|returns")
+        keywords = arrayOf(
+            "required|repeated|optional|option|oneof|default|reserved",
+            "package|import",
+            "rpc|returns")
+    )
 
     val pythonRules = createGenericCodeRules<R, S>(
         codeStyleProviders,
@@ -133,12 +135,12 @@ object CodeRules {
                 .toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider)),
         definitions = arrayOf("class", "def", "lambda"),
         builtIns = arrayOf("True|False|None"),
-        "from|import|global|nonlocal",
-        "async|await|class|self|cls|def|lambda",
-        "for|while|if|else|elif|break|continue|return",
-        "try|except|finally|raise|pass|yeild",
-        "in|as|is|del",
-        "and|or|not|assert",
+        keywords = arrayOf("from|import|global|nonlocal",
+            "async|await|class|self|cls|def|lambda",
+            "for|while|if|else|elif|break|continue|return",
+            "try|except|finally|raise|pass|yeild",
+            "in|as|is|del",
+            "and|or|not|assert")
     )
 
     val rustRules = createGenericCodeRules<R, S>(
@@ -157,11 +159,11 @@ object CodeRules {
             "Arc|Rc|Box|Pin|Future",
             "true|false|bool|usize|i64|u64|u32|i32|str|String"
         ),
-        "let|mut|static|const|unsafe",
-        "crate|mod|extern|pub|pub(super)|use",
-        "struct|enum|trait|type|where|impl|dyn|async|await|move|self|fn",
-        "for|while|loop|if|else|match|break|continue|return|try",
-        "in|as|ref",
+        keywords = arrayOf("let|mut|static|const|unsafe",
+            "crate|mod|extern|pub|pub(super)|use",
+            "struct|enum|trait|type|where|impl|dyn|async|await|move|self|fn",
+            "for|while|loop|if|else|match|break|continue|return|try",
+            "in|as|ref")
     )
 
     val xmlRules = listOf<Rule<R, Node<R>, S>>(
@@ -203,6 +205,16 @@ object CodeRules {
         builtIns = JavaScript.BUILT_INS,
         keywords = JavaScript.KEYWORDS)
 
+    val typescriptRules = createGenericCodeRules<R, S>(
+        codeStyleProviders,
+        additionalRules = TypeScript.createCodeRules(codeStyleProviders),
+        definitions = arrayOf("class", "interface", "enum",
+            "namespace", "module", "type"),
+        builtIns = TypeScript.BUILT_INS,
+        keywords = TypeScript.KEYWORDS,
+        types = TypeScript.TYPES
+    )
+    
     return mapOf(
         "kt" to kotlinRules,
         "kotlin" to kotlinRules,
@@ -228,6 +240,9 @@ object CodeRules {
       
         "js" to javascriptRules,
         "javascript" to javascriptRules,
+        
+        "ts" to typescriptRules,
+        "typescript" to typescriptRules
     )
   }
 
@@ -237,13 +252,17 @@ object CodeRules {
   private fun <R, S> createGenericCodeRules(
       codeStyleProviders: CodeStyleProviders<R>,
       additionalRules: List<Rule<R, Node<R>, S>>,
-      definitions: Array<String>, builtIns: Array<String>, vararg keywords: String
+      definitions: Array<String>,
+      builtIns: Array<String>,
+      keywords: Array<String>,
+      types: Array<String> = arrayOf(" ")
   ): List<Rule<R, Node<R>, S>> =
       additionalRules +
           listOf(
               createDefinitionRule(codeStyleProviders, *definitions),
               createWordPattern(*builtIns).toMatchGroupRule(stylesProvider = codeStyleProviders.genericsStyleProvider),
               createWordPattern(*keywords).toMatchGroupRule(stylesProvider = codeStyleProviders.keywordStyleProvider),
+              createWordPattern(*types).toMatchGroupRule(stylesProvider = codeStyleProviders.typesStyleProvider),
               PATTERN_NUMBERS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
               PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
               PATTERN_TEXT.toMatchGroupRule(),
