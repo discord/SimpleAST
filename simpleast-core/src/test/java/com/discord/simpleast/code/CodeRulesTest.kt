@@ -66,7 +66,7 @@ class CodeRulesTest {
       \```test```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<TextNode<*>>("`", "``", "test", "``", "`")
+    ast.assertNodeContents<CodeNode<*>>("test")
   }
 
   @Test

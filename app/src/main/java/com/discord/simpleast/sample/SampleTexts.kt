@@ -233,20 +233,67 @@ object SampleTexts {
     JavaScript code block:
     ```js
     const { performance } = require('perf_hooks');
+
     function getMem() {
       return Object.entries(process.memoryUsage())
-               .map(([K, V]) => `${'$'}{K}: ${'$'}{(V / (1024 ** 2)).toFixed(1)}MB`)
+               .map(([K, V]) =>
+                 `${'$'}{K}: ${'$'}{(V / (1024 ** 2)).toFixed(1)}MB`)
                .join('\n');
     }
+
     const memories = [];
     let timer = performance.now();
-    for (let i = 0; i < 50; i++) {
+
+    for (let i = 0; i < 50; i++)
       if (memories.length === 5) break;
-      else if (i % 5 === 0) memories.push(getMem());
-    }
+      else if (i % 5 === 0)
+        memories.push(getMem());
+
     timer = performance.now() - timer;
 
     console.log(`Took ${'$'}{timer} ms`);
+    ```
+  """
+  
+  private const val CODE_BLOCK_TYPESCRIPT = """
+    TypeScript code block:
+    ```ts
+    import { inspect } from 'util';
+    import type { InspectOptions } from 'util';
+
+    interface LogOptions extends InspectOptions {
+      showDate?: boolean;
+    }
+
+    class Logger {
+      private options: LogOptions;
+
+      public constructor(loggerOptions: LogOptions = {}) {
+        this.options = loggerOptions;
+      }
+
+      private log(value: any, options: LogOptions): void {
+        const showDate: boolean =
+          options.showDate ?? false;
+
+        delete options.showDate;
+
+        console.log((showDate ?
+          `[${'$'}{new Date().toLocaleTimeString()}] `
+          : '') + inspect(value, options));
+      }
+
+      public info(value: any, options: LogOptions = this.options): void {
+        this.log(value, options);
+      }
+    }
+
+    const logger: Logger = new Logger({
+      showDate: true,
+      showHidden: true
+    });
+
+    logger.info(1);
     ```
   """
 
@@ -266,6 +313,7 @@ object SampleTexts {
     $CODE_BLOCK_XML
     $CODE_BLOCK_CRYSTAL
     $CODE_BLOCK_JAVASCRIPT
+    $CODE_BLOCK_TYPESCRIPT
     
     That should do it....
   """

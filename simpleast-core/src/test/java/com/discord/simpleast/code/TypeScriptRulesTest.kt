@@ -10,7 +10,7 @@ import org.junit.Before
 import org.junit.Test
 
 
-class JavaScriptRulesTest {
+class TypeScriptRulesTest {
 
   private class TestState
 
@@ -34,7 +34,7 @@ class JavaScriptRulesTest {
   @Test
   fun comments() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       /** Multiline
           Comment
       */
@@ -57,7 +57,7 @@ class JavaScriptRulesTest {
   @Test
   fun strings() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       x = 'Hello';
       y = "world";
       log(`Hi`);
@@ -72,7 +72,7 @@ class JavaScriptRulesTest {
   @Test
   fun stringsMultiline() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       text = `
       hello
       world
@@ -93,7 +93,7 @@ class JavaScriptRulesTest {
   @Test
   fun functions() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       function test(T) {
         // Implementation
       }
@@ -106,20 +106,20 @@ class JavaScriptRulesTest {
       ```
     """.trimIndent(), TestState())
 
-    ast.assertNodeContents<JavaScript.FunctionNode<*>>(
-      "function test(T)",
-      "function ()",
-      "function* generator()",
-      "static test()",
-      "async fetch()",
-      "get tokens()",
-      "set constants()")
+    ast.assertNodeContents<TypeScript.FunctionNode<*>>(
+      "function test",
+      "function ",
+      "function* generator",
+      "static test",
+      "async fetch",
+      "get tokens",
+      "set constants")
   }
 
   @Test
   fun commentedFunction() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       /*
         function test(T) {
           throw new Error();
@@ -145,7 +145,7 @@ class JavaScriptRulesTest {
   @Test
   fun keywords() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       while (true) {}
       for (;;) {}
       if (false) {}
@@ -168,7 +168,7 @@ class JavaScriptRulesTest {
   @Test
   fun numbers() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       x = 0;
       x += 69;
       max(x, 420);
@@ -182,13 +182,13 @@ class JavaScriptRulesTest {
   @Test
   fun fields() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       var foo = x;
       let bar = y;
       const baz = z;
         ```
     """.trimIndent(), TestState())
-    ast.assertNodeContents<JavaScript.FieldNode<*>>(
+    ast.assertNodeContents<TypeScript.FieldNode<*>>(
         "var foo",
         "let bar",
         "const baz")
@@ -197,7 +197,7 @@ class JavaScriptRulesTest {
   @Test
   fun classDef() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       class Bug {}
       ```
     """.trimIndent(), TestState())
@@ -209,7 +209,7 @@ class JavaScriptRulesTest {
   @Test
   fun regex() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       /(.*)/g
       /[\$\{\}]/
       ```
@@ -219,24 +219,60 @@ class JavaScriptRulesTest {
   }
 
   @Test
-  fun generics() {
-    val ast = parser.parse("""
-      ```js
-      <pending>
-      ```
-    """.trimIndent(), TestState())
-
-   ast.assertNodeContents<StyleNode.TextStyledNode<*>>("<pending>")
-  }
-
-  @Test
   fun objectProperties() {
     val ast = parser.parse("""
-      ```js
+      ```ts
       { foo: bar }
       ```
     """.trimIndent(), TestState())
 
-  ast.assertNodeContents<JavaScript.ObjectPropertyNode<*>>("{ foo:")
+  ast.assertNodeContents<TypeScript.ObjectPropertyNode<*>>("{ foo:")
+ }
+ 
+ @Test
+ fun types() {
+   val ast = parser.parse("""
+     ```ts
+     string;
+     boolean;
+     number;
+     symbol;
+     ```
+   """.trimIndent(), TestState())
+   
+   ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+     "string", "boolean", "number", "symbol")
+ }
+ 
+ @Test
+ fun decorators() {
+   val ast = parser.parse("""
+     ```ts
+     @sealed
+     @test
+     @internal
+     @wrap
+     @save()
+     @call<T>()
+     ```
+   """.trimIndent(), TestState())
+   
+   ast.assertNodeContents<TypeScript.DecoratorNode<*>>(
+     "@sealed", "@test", "@internal",
+     "@wrap", "@save", "@call<T>")
+ }
+
+ @Test
+ fun interfaces() {
+   val ast = parser.parse("""
+     ```ts
+     interface Foo {}
+     interface _Bar {}
+     interface Baz_ {}
+     ```
+   """.trimIndent(), TestState())
+
+   ast.assertNodeContents<CodeNode.DefinitionNode<*>>(
+     "interface Foo", "interface _Bar", "interface Baz_")
  }
 }
