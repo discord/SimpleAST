@@ -297,6 +297,18 @@ object SampleTexts {
     ```
   """
 
+  private const val CODE_BLOCK_DIFF = """
+    Diff code block:
+    ```diff
+    - "This car is amzing!"
+    + "This car is amazing!"
+    - 1
+    + 100
+    - This house is not cheap.
+    + This house is expensive.
+    ```
+  """
+
   const val CODE_BLOCKS = """
     # Code block samples
     inlined:```py language code blocks need newline```
@@ -314,6 +326,7 @@ object SampleTexts {
     $CODE_BLOCK_CRYSTAL
     $CODE_BLOCK_JAVASCRIPT
     $CODE_BLOCK_TYPESCRIPT
+    $CODE_BLOCK_DIFF
     
     That should do it....
   """
