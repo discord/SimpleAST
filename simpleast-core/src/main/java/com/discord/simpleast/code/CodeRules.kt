@@ -214,6 +214,15 @@ object CodeRules {
         keywords = TypeScript.KEYWORDS,
         types = TypeScript.TYPES
     )
+
+    val diffRules = listOf<Rule<R, Node<R>, S>>(
+        Pattern.compile("""^-.*""")
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.keywordStyleProvider),
+        Pattern.compile("""^\+.*""")
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.typesStyleProvider),
+        PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
+        PATTERN_TEXT.toMatchGroupRule()
+    )
     
     return mapOf(
         "kt" to kotlinRules,
@@ -242,7 +251,9 @@ object CodeRules {
         "javascript" to javascriptRules,
         
         "ts" to typescriptRules,
-        "typescript" to typescriptRules
+        "typescript" to typescriptRules,
+
+        "diff" to diffRules
     )
   }
 
