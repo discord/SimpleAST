@@ -103,6 +103,8 @@ object CustomMarkdownRules {
         typesStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Types)) },
         genericsStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Generics)) },
         paramsStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Params)) },
+        additionStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Addition)) },
+        deletionStyleProvider = { listOf(TextAppearanceSpan(context, R.style.Code_TextAppearance_Deletion)) },
     )
     val languageMap = CodeRules.createCodeLanguageMap<RC, S>(codeStyleProviders)
 

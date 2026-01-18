@@ -217,9 +217,9 @@ object CodeRules {
 
     val diffRules = listOf<Rule<R, Node<R>, S>>(
         Pattern.compile("""^-.*""")
-            .toMatchGroupRule(stylesProvider = codeStyleProviders.keywordStyleProvider),
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.deletionStyleProvider),
         Pattern.compile("""^\+.*""")
-            .toMatchGroupRule(stylesProvider = codeStyleProviders.typesStyleProvider),
+            .toMatchGroupRule(stylesProvider = codeStyleProviders.additionStyleProvider),
         PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
         PATTERN_TEXT.toMatchGroupRule()
     )

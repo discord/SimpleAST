@@ -11,6 +11,8 @@ data class CodeStyleProviders<R>(
     val typesStyleProvider: StyleNode.SpanProvider<R> = emptyProvider(),
     val genericsStyleProvider: StyleNode.SpanProvider<R> = emptyProvider(),
     val paramsStyleProvider: StyleNode.SpanProvider<R> = emptyProvider(),
+    val additionStyleProvider: StyleNode.SpanProvider<R> = emptyProvider(),
+    val deletionStyleProvider: StyleNode.SpanProvider<R> = emptyProvider(),
 )
 
 private fun <R> emptyProvider() = StyleNode.SpanProvider<R> { emptyList<Any>() }
