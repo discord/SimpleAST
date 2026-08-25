@@ -81,6 +81,27 @@ object CodeRules {
         }
       }
 
+  /**
+   * Sibling of [toMatchGroupRule] that extends [Rule.BlockRule] instead of [Rule], so the pattern
+   * only applies at a true line start. [Parser.parse] matches rules against the *remaining* source,
+   * so a leading `^` would otherwise anchor to the next token rather than a physical line.
+   */
+  private fun <R, S> Pattern.toLineStartMatchGroupRule(
+      group: Int = 0,
+      stylesProvider: StyleNode.SpanProvider<R>? = null
+  ) =
+      object : Rule.BlockRule<R, Node<R>, S>(this) {
+        override fun parse(
+            matcher: Matcher, parser: Parser<R, in Node<R>, S>, state: S
+        ): ParseSpec<R, S> {
+          val content = matcher.group(group).orEmpty()
+          val node = stylesProvider
+              ?.let { StyleNode.TextStyledNode(content, it) }
+              ?: TextNode(content)
+          return ParseSpec.createTerminal(node, state)
+        }
+      }
+
   fun <R, S> createDefinitionRule(
       codeStyleProviders: CodeStyleProviders<R>, vararg identifiers: String) =
       object : Rule<R, Node<R>, S>(Pattern.compile("""^\b(${identifiers.joinToString("|")})(\s+\w+)""")) {
@@ -217,9 +238,9 @@ object CodeRules {
 
     val diffRules = listOf<Rule<R, Node<R>, S>>(
         Pattern.compile("""^-.*""")
-            .toMatchGroupRule(stylesProvider = codeStyleProviders.deletionStyleProvider),
+            .toLineStartMatchGroupRule(stylesProvider = codeStyleProviders.deletionStyleProvider),
         Pattern.compile("""^\+.*""")
-            .toMatchGroupRule(stylesProvider = codeStyleProviders.additionStyleProvider),
+            .toLineStartMatchGroupRule(stylesProvider = codeStyleProviders.additionStyleProvider),
         PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
         PATTERN_TEXT.toMatchGroupRule()
     )
