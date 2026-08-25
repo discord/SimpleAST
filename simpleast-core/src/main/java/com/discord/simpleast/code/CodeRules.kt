@@ -226,7 +226,7 @@ object CodeRules {
     
     return mapOf(
         "kt" to kotlinRules,
-        "ktm" to kotlinRules,
+        "kts" to kotlinRules,
         "kotlin" to kotlinRules,
 
         "protobuf" to protoRules,
