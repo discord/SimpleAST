@@ -306,6 +306,8 @@ object SampleTexts {
     + 100
     - This house is not cheap.
     + This house is expensive.
+    This line is - not a diff.
+    This line + isn't either.
     ```
   """
 
