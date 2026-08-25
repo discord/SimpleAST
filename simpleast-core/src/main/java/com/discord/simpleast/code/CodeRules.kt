@@ -247,6 +247,7 @@ object CodeRules {
     
     return mapOf(
         "kt" to kotlinRules,
+        "kts" to kotlinRules,
         "kotlin" to kotlinRules,
 
         "protobuf" to protoRules,
@@ -255,6 +256,8 @@ object CodeRules {
 
         "py" to pythonRules,
         "python" to pythonRules,
+        "gyp" to pythonRules,
+        "ipython" to pythonRules,
 
         "rs" to rustRules,
         "rust" to rustRules,
@@ -270,10 +273,17 @@ object CodeRules {
       
         "js" to javascriptRules,
         "javascript" to javascriptRules,
+        "jsx" to javascriptRules,
+        "mjs" to javascriptRules,
+        "cjs" to javascriptRules,
         
         "ts" to typescriptRules,
         "typescript" to typescriptRules,
+        "tsx" to typescriptRules,
+        "mts" to typescriptRules,
+        "cts" to typescriptRules,
 
+        "patch" to diffRules,
         "diff" to diffRules
     )
   }
