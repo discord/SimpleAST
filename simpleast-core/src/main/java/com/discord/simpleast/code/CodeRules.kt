@@ -251,6 +251,8 @@ object CodeRules {
         "js" to javascriptRules,
         "javascript" to javascriptRules,
         "jsx" to javascriptRules,
+        "mjs" to javascriptRules,
+        "cjs" to javascriptRules,
         
         "ts" to typescriptRules,
         "typescript" to typescriptRules,
