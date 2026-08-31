@@ -1,6 +1,6 @@
 language: android
 
-dist: trusty
+dist: focal
 
 android:
   components:
