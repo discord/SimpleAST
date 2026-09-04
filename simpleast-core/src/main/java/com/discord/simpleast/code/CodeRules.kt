@@ -236,6 +236,15 @@ object CodeRules {
         types = TypeScript.TYPES
     )
 
+    val actionScriptRules = createGenericCodeRules<R, S>(
+        codeStyleProviders,
+        additionalRules = ActionScript.createCodeRules(codeStyleProviders),
+        definitions = arrayOf("class", "interface", "package", "namespace"),
+        builtIns = arrayOf(" "),
+        keywords = ActionScript.KEYWORDS,
+        types = arrayOf(" ")
+    )
+
     val diffRules = listOf<Rule<R, Node<R>, S>>(
         Pattern.compile("""^-.*""")
             .toLineStartMatchGroupRule(stylesProvider = codeStyleProviders.deletionStyleProvider),
@@ -282,6 +291,9 @@ object CodeRules {
         "tsx" to typescriptRules,
         "mts" to typescriptRules,
         "cts" to typescriptRules,
+
+        "as" to actionScriptRules,
+        "actionscript" to actionScriptRules,
 
         "patch" to diffRules,
         "diff" to diffRules
