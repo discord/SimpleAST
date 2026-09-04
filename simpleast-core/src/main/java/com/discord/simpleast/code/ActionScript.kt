@@ -82,29 +82,6 @@ object ActionScript {
   }
 
   /**
-   * Matches import and include statements (e.g. `import flash.display.Sprite;`).
-   */
-  class ImportNode<RC>(
-      content: String,
-      codeStyleProviders: CodeStyleProviders<RC>
-  ) : Node.Parent<RC>(
-      StyleNode.TextStyledNode(content, codeStyleProviders.genericsStyleProvider)
-  ) {
-    companion object {
-      private val PATTERN_ACTIONSCRIPT_IMPORT =
-          Pattern.compile("""^(?:import|include)\s+[a-zA-Z_$][a-zA-Z0-9_$.*]*;?""")
-
-      fun <RC, S> createImportRule(codeStyleProviders: CodeStyleProviders<RC>) =
-          object : Rule<RC, Node<RC>, S>(PATTERN_ACTIONSCRIPT_IMPORT) {
-            override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S): ParseSpec<RC, S> {
-              val content = matcher.group(0)!!
-              return ParseSpec.createTerminal(ImportNode(content, codeStyleProviders), state)
-            }
-          }
-    }
-  }
-
-  /**
    * Matches function declarations, getter/setters, signatures, and parameter lists.
    */
   class FunctionNode<RC>(
@@ -136,36 +113,6 @@ object ActionScript {
     }
   }
 
-  /**
-   * Matches ActionScript 3 metadata / annotation tags (e.g. `[SWF(...)]`, `[Event(...)]`, `[Bindable]`).
-   */
-  class AnnotationNode<RC>(
-      content: String,
-      codeStyleProviders: CodeStyleProviders<RC>
-  ) : Node.Parent<RC>(
-      StyleNode.TextStyledNode(content, codeStyleProviders.genericsStyleProvider)
-  ) {
-    companion object {
-      private val PATTERN_ACTIONSCRIPT_ANNOTATION =
-          Pattern.compile("""^\[\s*[a-zA-Z_$][a-zA-Z0-9_$]*(?:\(.*?\))?\s*\]""")
-
-      fun <RC, S> createAnnotationRule(codeStyleProviders: CodeStyleProviders<RC>) =
-          object : Rule<RC, Node<RC>, S>(PATTERN_ACTIONSCRIPT_ANNOTATION) {
-            override fun match(inspectionSource: CharSequence, lastCapture: String?, state: S): Matcher? {
-              if (lastCapture == null || lastCapture.contains('\n')) {
-                return super.match(inspectionSource, lastCapture, state)
-              }
-              return null
-            }
-
-            override fun parse(matcher: Matcher, parser: Parser<RC, in Node<RC>, S>, state: S): ParseSpec<RC, S> {
-              val content = matcher.group(0)!!
-              return ParseSpec.createTerminal(AnnotationNode(content, codeStyleProviders), state)
-            }
-          }
-    }
-  }
-
   private val PATTERN_ACTIONSCRIPT_COMMENTS =
       Pattern.compile("""^(?:(?://.*?(?=\n|$))|(/\*.*?\*/))""", Pattern.DOTALL)
 
@@ -181,8 +128,6 @@ object ActionScript {
       listOf(
           PATTERN_ACTIONSCRIPT_COMMENTS.toMatchGroupRule(stylesProvider = codeStyleProviders.commentStyleProvider),
           PATTERN_ACTIONSCRIPT_STRINGS.toMatchGroupRule(stylesProvider = codeStyleProviders.literalStyleProvider),
-          AnnotationNode.createAnnotationRule(codeStyleProviders),
-          ImportNode.createImportRule(codeStyleProviders),
           PackageNode.createPackageRule(codeStyleProviders),
           ClassHeritageNode.createClassHeritageRule(codeStyleProviders),
           PATTERN_ACTIONSCRIPT_REST_ARG.toMatchGroupRule(stylesProvider = codeStyleProviders.paramsStyleProvider),

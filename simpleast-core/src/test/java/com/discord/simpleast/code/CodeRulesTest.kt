@@ -286,9 +286,11 @@ class CodeRulesTest {
     """.trimIndent(), TestState())
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
-        """[SWF(width="800", height="600", backgroundColor="#1E1E1E")]""",
-        """[Event(name="playerReady", type="flash.events.Event")]""",
-        "[Bindable]",
+        """"800"""",
+        """"600"""",
+        """"#1E1E1E"""",
+        """"playerReady"""",
+        """"flash.events.Event"""",
         "public",
         "class",
         " GameClient",
@@ -418,7 +420,7 @@ class CodeRulesTest {
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         "package",
         " com.discord.sample",
-        "import flash.display.Sprite;",
+        "import",
         "public",
         "class",
         " GameClient",
