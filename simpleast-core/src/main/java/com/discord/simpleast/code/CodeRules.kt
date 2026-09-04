@@ -241,6 +241,8 @@ object CodeRules {
             .toLineStartMatchGroupRule(stylesProvider = codeStyleProviders.deletionStyleProvider),
         Pattern.compile("""^\+.*""")
             .toLineStartMatchGroupRule(stylesProvider = codeStyleProviders.additionStyleProvider),
+        Pattern.compile("""^!.*""")
+            .toLineStartMatchGroupRule(stylesProvider = codeStyleProviders.additionStyleProvider),
         PATTERN_LEADING_WS_CONSUMER.toMatchGroupRule(),
         PATTERN_TEXT.toMatchGroupRule()
     )
