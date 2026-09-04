@@ -140,6 +140,22 @@ class CodeRulesTest {
   }
 
   @Test
+  fun commentsActionScript() {
+    val ast = parser.parse("""
+      ```as
+      some.call() // Inlined
+      // Line comment
+      /* Block comment */
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        "// Inlined",
+        "// Line comment",
+        "/* Block comment */")
+  }
+
+  @Test
   fun stringsRust() {
     val ast = parser.parse("""
       ```rs
@@ -185,6 +201,20 @@ class CodeRulesTest {
 
     ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
         """"lyte"""")
+  }
+
+  @Test
+  fun stringsActionScript() {
+    val ast = parser.parse("""
+      ```as
+      call.me("maybe")
+      name = 'lyte';
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        """"maybe"""",
+        "'lyte'")
   }
 
   /**
@@ -237,6 +267,39 @@ class CodeRulesTest {
         "#[derive(HelperAttr)]\n",
         "struct", " Struct",
 //        "#[helper]"  // Not supported
+    )
+  }
+
+  @Test
+  fun annotationsActionScript() {
+    val ast = parser.parse("""
+      ```as
+      [SWF(width="800", height="600", backgroundColor="#1E1E1E")]
+      [Event(name="playerReady", type="flash.events.Event")]
+      [Bindable]
+      public class GameClient {
+        public function test(): void {
+          var item = list[i];
+        }
+      }
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        """"800"""",
+        """"600"""",
+        """"#1E1E1E"""",
+        """"playerReady"""",
+        """"flash.events.Event"""",
+        "public",
+        "class",
+        " GameClient",
+        "public ",
+        "function",
+        " test",
+        "()",
+        "void",
+        "var",
     )
   }
 
@@ -328,5 +391,60 @@ class CodeRulesTest {
         "WHERE", "0",
         "and", "is", "NOT", "NULL",
         "Order By")
+  }
+
+  @Test
+  fun keywordsActionScript() {
+    val ast = parser.parse("""
+      ```as
+      package com.discord.sample {
+        import flash.display.Sprite;
+
+        public class GameClient extends Sprite {
+          private var score = 0;
+          public const MAX = 50;
+
+          public function GameClient(name, ...rest) {
+            super();
+            this.score = 0;
+          }
+
+          override public function toString() {
+            return null;
+          }
+        }
+      }
+      ```
+    """.trimIndent(), TestState())
+
+    ast.assertNodeContents<StyleNode.TextStyledNode<*>>(
+        "package",
+        " com.discord.sample",
+        "import",
+        "public",
+        "class",
+        " GameClient",
+        "extends",
+        " Sprite",
+        "private",
+        "var",
+        "0",
+        "public",
+        "const",
+        "50",
+        "public ",
+        "function",
+        " GameClient",
+        "(name, ...rest)",
+        "super",
+        "this",
+        "0",
+        "override public ",
+        "function",
+        " toString",
+        "()",
+        "return",
+        "null",
+    )
   }
 }

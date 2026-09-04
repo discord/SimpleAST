@@ -297,6 +297,35 @@ object SampleTexts {
     ```
   """
 
+  private const val CODE_BLOCK_ACTIONSCRIPT = """
+    ActionScript code block:
+    ```as
+    package com.discord.sample {
+      import flash.display.Sprite;
+      import flash.events.Event;
+
+      public class GameClient extends Sprite {
+        private var _score: int = 0;
+        public static const MAX_PLAYERS: uint = 50;
+
+        public function GameClient(name: String, ...rest) {
+          super();
+          this._score = 0;
+          trace("Player: " + name);
+        }
+
+        public function get score(): int {
+          return _score;
+        }
+
+        override public function toString(): String {
+          return "[GameClient score=" + _score + "]";
+        }
+      }
+    }
+    ```
+  """
+
   private const val CODE_BLOCK_DIFF = """
     Diff code block:
     ```diff
@@ -326,6 +355,7 @@ object SampleTexts {
     $CODE_BLOCK_CRYSTAL
     $CODE_BLOCK_JAVASCRIPT
     $CODE_BLOCK_TYPESCRIPT
+    $CODE_BLOCK_ACTIONSCRIPT
     $CODE_BLOCK_DIFF
     
     That should do it....
